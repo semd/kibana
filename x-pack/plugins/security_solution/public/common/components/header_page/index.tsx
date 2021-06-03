@@ -5,7 +5,7 @@
  * 2.0.
  */
 
-import { EuiBadge, EuiFlexGroup, EuiFlexItem, EuiProgress } from '@elastic/eui';
+import { EuiBadge, EuiProgress, EuiPageHeader, EuiPageHeaderSection } from '@elastic/eui';
 import React, { useCallback } from 'react';
 import { useHistory } from 'react-router-dom';
 import styled, { css } from 'styled-components';
@@ -29,23 +29,9 @@ const Header = styled.header.attrs({
 })<HeaderProps>`
   ${({ border, theme }) => css`
     margin-bottom: ${theme.eui.euiSizeL};
-
-    ${border &&
-    css`
-      border-bottom: ${theme.eui.euiBorderThin};
-      padding-bottom: ${theme.eui.paddingSizes.l};
-      .euiProgress {
-        top: ${theme.eui.paddingSizes.l};
-      }
-    `}
   `}
 `;
 Header.displayName = 'Header';
-
-const FlexItem = styled(EuiFlexItem)`
-  display: block;
-`;
-FlexItem.displayName = 'FlexItem';
 
 const LinkBack = styled.div.attrs({
   className: 'siemHeaderPage__linkBack',
@@ -111,45 +97,43 @@ const HeaderPageComponent: React.FC<HeaderPageProps> = ({
     [backOptions, history]
   );
   return (
-    <Header border={border} {...rest}>
-      <EuiFlexGroup alignItems="center">
-        <FlexItem>
-          {backOptions && (
-            <LinkBack>
-              <LinkIcon
-                dataTestSubj={backOptions.dataTestSubj ?? 'link-back'}
-                onClick={goTo}
-                href={formatUrl(backOptions.href ?? '')}
-                iconType="arrowLeft"
-              >
-                {backOptions.text}
-              </LinkIcon>
-            </LinkBack>
-          )}
-
-          {!backOptions && backComponent && <>{backComponent}</>}
-
-          {titleNode || (
-            <Title
-              draggableArguments={draggableArguments}
-              title={title}
-              badgeOptions={badgeOptions}
-            />
-          )}
-
-          {subtitle && <Subtitle data-test-subj="header-page-subtitle" items={subtitle} />}
-          {subtitle2 && <Subtitle data-test-subj="header-page-subtitle-2" items={subtitle2} />}
-          {border && isLoading && <EuiProgress size="xs" color="accent" />}
-        </FlexItem>
-
-        {children && (
-          <FlexItem data-test-subj="header-page-supplements" grow={false}>
-            {children}
-          </FlexItem>
+    <EuiPageHeader alignItems="center" bottomBorder={border} paddingSize="l">
+      <EuiPageHeaderSection>
+        {backOptions && (
+          <LinkBack>
+            <LinkIcon
+              dataTestSubj={backOptions.dataTestSubj ?? 'link-back'}
+              onClick={goTo}
+              href={formatUrl(backOptions.href ?? '')}
+              iconType="arrowLeft"
+            >
+              {backOptions.text}
+            </LinkIcon>
+          </LinkBack>
         )}
-      </EuiFlexGroup>
+
+        {!backOptions && backComponent && <>{backComponent}</>}
+
+        {titleNode || (
+          <Title
+            draggableArguments={draggableArguments}
+            title={title}
+            badgeOptions={badgeOptions}
+          />
+        )}
+
+        {subtitle && <Subtitle data-test-subj="header-page-subtitle" items={subtitle} />}
+        {subtitle2 && <Subtitle data-test-subj="header-page-subtitle-2" items={subtitle2} />}
+        {border && isLoading && <EuiProgress size="xs" color="accent" />}
+      </EuiPageHeaderSection>
+
+      {children && (
+        <EuiPageHeaderSection data-test-subj="header-page-supplements">
+          {children}
+        </EuiPageHeaderSection>
+      )}
       {!hideSourcerer && <Sourcerer scope={SourcererScopeName.default} />}
-    </Header>
+    </EuiPageHeader>
   );
 };
 
