@@ -12,7 +12,7 @@ import styled from 'styled-components';
 import { SecurityPageName } from '../../app/types';
 import { getCaseUrl } from '../../common/components/link_to';
 import { useGetUrlSearch } from '../../common/components/navigation/use_get_url_search';
-import { WrapperPage } from '../../common/components/wrapper_page';
+import { SecuritySolutionPageWrapper } from '../../common/components/page_wrapper';
 import { useGetUserSavedObjectPermissions, useKibana } from '../../common/lib/kibana';
 import { SpyRoute } from '../../common/utils/route/spy_routes';
 import { navTabs } from '../../app/home/home_navigations';
@@ -46,7 +46,7 @@ const ConfigureCasesPageComponent: React.FC = () => {
 
   return (
     <>
-      <WrapperPage noPadding>
+      <SecuritySolutionPageWrapper noPadding>
         <SectionWrapper>
           <HeaderWrapper>
             <CaseHeaderPage title={i18n.CONFIGURE_CASES_PAGE_TITLE} backOptions={backOptions} />
@@ -57,7 +57,7 @@ const ConfigureCasesPageComponent: React.FC = () => {
             userCanCrud: userPermissions?.crud ?? false,
           })}
         </WhitePageWrapper>
-      </WrapperPage>
+      </SecuritySolutionPageWrapper>
       <SpyRoute pageName={SecurityPageName.case} />
     </>
   );
