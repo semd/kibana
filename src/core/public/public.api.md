@@ -150,6 +150,7 @@ export interface ApplicationStart {
     getUrlForApp(appId: string, options?: {
         path?: string;
         absolute?: boolean;
+        deepLinkId?: string;
     }): string;
     navigateToApp(appId: string, options?: NavigateToAppOptions): Promise<void>;
     navigateToUrl(url: string): Promise<void>;
@@ -1255,7 +1256,7 @@ export interface SavedObjectsCreateOptions {
 // @public (undocumented)
 export interface SavedObjectsFindOptions {
     // @alpha
-    aggs?: Record<string, estypes.AggregationContainer>;
+    aggs?: Record<string, estypes.AggregationsAggregationContainer>;
     defaultSearchOperator?: 'AND' | 'OR';
     fields?: string[];
     // Warning: (ae-forgotten-export) The symbol "KueryNode" needs to be exported by the entry point index.d.ts
@@ -1281,7 +1282,7 @@ export interface SavedObjectsFindOptions {
     // (undocumented)
     sortField?: string;
     // (undocumented)
-    sortOrder?: estypes.SortOrder;
+    sortOrder?: estypes.SearchSortOrder;
     // (undocumented)
     type: string | string[];
     typeToNamespacesMap?: Map<string, string[] | undefined>;
