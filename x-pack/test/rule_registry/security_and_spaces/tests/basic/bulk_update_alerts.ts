@@ -128,35 +128,6 @@ export default ({ getService }: FtrProviderContext) => {
             })
             .expect(200);
         });
-
-        // it(`${username} should fail to update a non-existent alert in ${space}/${index}`, async () => {
-        //   const fakeAlertId = 'some-alert-id-that-doesnt-exist';
-        //   await supertestWithoutAuth
-        //     .post(`${getSpaceUrlPrefix(space)}${TEST_URL}`)
-        //     .auth(username, password)
-        //     .set('kbn-xsrf', 'true')
-        //     .send({
-        //       ids: [fakeAlertId],
-        //       status: 'closed',
-        //       index,
-        //       _version: ALERT_VERSION,
-        //     })
-        //     .expect(404);
-        // });
-
-        // it(`${username} should return a 404 when superuser accesses not-existent alerts as data index`, async () => {
-        //   await supertestWithoutAuth
-        //     .get(`${getSpaceUrlPrefix(space)}${TEST_URL}?id=${APM_ALERT_ID}&index=myfakeindex`)
-        //     .auth(username, password)
-        //     .set('kbn-xsrf', 'true')
-        //     .send({
-        //       ids: [APM_ALERT_ID],
-        //       status: 'closed',
-        //       index: 'this index does not exist',
-        //       _version: ALERT_VERSION,
-        //     })
-        //     .expect(404);
-        // });
       });
 
       unauthorizedUsers.forEach(({ username, password }) => {
@@ -169,7 +140,6 @@ export default ({ getService }: FtrProviderContext) => {
               ids: [alertId],
               status: 'closed',
               index,
-              // query: 'kibana.rac.alert.status: open',
             });
           expect([403, 404]).to.contain(res.statusCode);
         });

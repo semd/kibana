@@ -136,8 +136,6 @@ export class AlertsClient {
         ],
       };
 
-      // this.logger.debug(`LAST SORT IDS: ${lastSortIds}`);
-
       if (lastSortIds.length > 0) {
         queryBody = {
           ...queryBody,
@@ -156,14 +154,6 @@ export class AlertsClient {
         body: queryBody,
         seq_no_primary_term: true,
       });
-
-      // this.logger.debug(`RESULT: ${JSON.stringify(result, null, 2)}`);
-
-      // if (result == null || result.body == null || result.body.hits.hits.length === 0) {
-      //   const errorMessage = `Unable to retrieve alert details for alert with id of "${id}" or with query "${query}" and operation ${operation}`;
-      //   this.logger.error(errorMessage);
-      //   throw Boom.notFound(errorMessage);
-      // }
 
       if (!result?.body.hits.hits.every((hit) => isValidAlert(hit._source))) {
         const errorMessage = `Invalid alert found with id of "${id}" or with query "${query}" and operation ${operation}`;
@@ -461,10 +451,6 @@ export class AlertsClient {
           operation: WriteOperations.Update,
         });
 
-        // this.logger.debug(
-        //   `FETCH AND AUDIT RESPONSE ${JSON.stringify(fetchAndAuditResponse, null, 2)}`
-        // );
-
         if (!fetchAndAuditResponse?.auditedAlerts) {
           throw Boom.unauthorized('Failed to audit alerts');
         }
@@ -484,7 +470,6 @@ export class AlertsClient {
         });
         return result;
       } catch (err) {
-        // TODO: Update error message
         this.logger.error(`UPDATE ERROR: ${err}`);
         throw err;
       }
