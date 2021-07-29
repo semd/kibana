@@ -6,6 +6,8 @@
  * Side Public License, v 1.
  */
 
+import { estypes } from '@elastic/elasticsearch';
+
 /**
  * registering a new instance of the rule data client
  * in a new plugin will require updating the below data structure
@@ -38,3 +40,25 @@ export type ValidFeatureId = keyof typeof mapConsumerToIndexName;
 export const validFeatureIds = Object.keys(mapConsumerToIndexName);
 export const isValidFeatureId = (a: unknown): a is ValidFeatureId =>
   typeof a === 'string' && validFeatureIds.includes(a);
+
+/**
+ * Prevent javascript from returning Number.MAX_SAFE_INTEGER when Elasticsearch expects
+ * Java's Long.MAX_VALUE. This happens when sorting fields by date which are
+ * unmapped in the provided index
+ *
+ * Ref: https://github.com/elastic/elasticsearch/issues/28806#issuecomment-369303620
+ *
+ * return stringified Long.MAX_VALUE if we receive Number.MAX_SAFE_INTEGER
+ * @param sortIds estypes.SearchSortResults | undefined
+ * @returns SortResults
+ */
+export const getSafeSortIds = (sortIds: estypes.SearchSortResults | undefined) => {
+  return sortIds?.map((sortId) => {
+    // haven't determined when we would receive a null value for a sort id
+    // but in case we do, default to sending the stringified Java max_int
+    if (sortId == null || sortId === '' || sortId >= Number.MAX_SAFE_INTEGER) {
+      return '9223372036854775807';
+    }
+    return sortId;
+  });
+};

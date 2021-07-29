@@ -29,6 +29,10 @@ const alertsClientParams: jest.Mocked<ConstructorOptions> = {
 beforeEach(() => {
   jest.resetAllMocks();
   alertingAuthMock.getSpaceId.mockImplementation(() => 'test_default_space_id');
+  // @ts-expect-error
+  alertingAuthMock.getFindAuthorizationFilter.mockImplementation(async () =>
+    Promise.resolve({ filter: [] })
+  );
 });
 
 describe('get()', () => {
@@ -92,18 +96,37 @@ describe('get()', () => {
               "bool": Object {
                 "filter": Array [
                   Object {
-                    "term": Object {
-                      "_id": "1",
+                    "bool": Object {
+                      "minimum_should_match": 1,
+                      "should": Array [
+                        Object {
+                          "match": Object {
+                            "_id": "1",
+                          },
+                        },
+                      ],
                     },
                   },
+                  Object {},
                   Object {
                     "term": Object {
                       "kibana.space_ids": "test_default_space_id",
                     },
                   },
                 ],
+                "must": Array [],
+                "must_not": Array [],
+                "should": Array [],
               },
             },
+            "sort": Array [
+              Object {
+                "@timestamp": Object {
+                  "order": "asc",
+                  "unmapped_type": "date",
+                },
+              },
+            ],
           },
           "ignore_unavailable": true,
           "index": ".alerts-observability-apm",
@@ -151,12 +174,12 @@ describe('get()', () => {
         },
       })
     );
-    await alertsClient.get({ id: '1', index: '.alerts-observability-apm' });
+    await alertsClient.get({ id: 'NoxgpHkBqbdrfX07MqXV', index: '.alerts-observability-apm' });
 
     expect(auditLogger.log).toHaveBeenCalledWith({
       error: undefined,
-      event: { action: 'alert_get', category: ['database'], outcome: 'success', type: ['access'] },
-      message: 'User has accessed alert [id=1]',
+      event: { action: 'alert_get', category: ['database'], outcome: 'unknown', type: ['access'] },
+      message: 'User is accessing alert [id=NoxgpHkBqbdrfX07MqXV]',
     });
   });
 
@@ -166,12 +189,19 @@ describe('get()', () => {
     esClientMock.search.mockRejectedValue(error);
 
     await expect(
-      alertsClient.get({ id: '1', index: '.alerts-observability-apm' })
-    ).rejects.toThrowErrorMatchingInlineSnapshot(`"something went wrong"`);
+      alertsClient.get({ id: 'NoxgpHkBqbdrfX07MqXV', index: '.alerts-observability-apm' })
+    ).rejects.toThrowErrorMatchingInlineSnapshot(`
+            "Unable to retrieve alert details for alert with id of \\"NoxgpHkBqbdrfX07MqXV\\" or with query \\"null\\" and operation get 
+            Error: Error: something went wrong"
+          `);
     expect(auditLogger.log).toHaveBeenCalledWith({
-      error: { code: 'Error', message: 'something went wrong' },
+      error: {
+        code: 'Error',
+        message:
+          'Unable to retrieve alert details for alert with id of "NoxgpHkBqbdrfX07MqXV" or with query "null" and operation get \nError: Error: something went wrong',
+      },
       event: { action: 'alert_get', category: ['database'], outcome: 'failure', type: ['access'] },
-      message: 'Failed attempt to access alert [id=1]',
+      message: 'Failed attempt to access alert [id=NoxgpHkBqbdrfX07MqXV]',
     });
   });
 
@@ -217,14 +247,11 @@ describe('get()', () => {
 
     test('returns alert if user is authorized to read alert under the consumer', async () => {
       const alertsClient = new AlertsClient(alertsClientParams);
-      const result = await alertsClient.get({ id: '1', index: '.alerts-observability-apm' });
-
-      expect(alertingAuthMock.ensureAuthorized).toHaveBeenCalledWith({
-        entity: 'alert',
-        consumer: 'apm',
-        operation: 'get',
-        ruleTypeId: 'apm.error_rate',
+      const result = await alertsClient.get({
+        id: 'NoxgpHkBqbdrfX07MqXV',
+        index: '.alerts-observability-apm',
       });
+
       expect(result).toMatchInlineSnapshot(`
         Object {
           "_version": "WzM2MiwyXQ==",
@@ -237,26 +264,6 @@ describe('get()', () => {
           "rule.id": "apm.error_rate",
         }
       `);
-    });
-
-    test('throws when user is not authorized to get this type of alert', async () => {
-      const alertsClient = new AlertsClient(alertsClientParams);
-      alertingAuthMock.ensureAuthorized.mockRejectedValue(
-        new Error(`Unauthorized to get a "apm.error_rate" alert for "apm"`)
-      );
-
-      await expect(
-        alertsClient.get({ id: '1', index: '.alerts-observability-apm' })
-      ).rejects.toMatchInlineSnapshot(
-        `[Error: Unauthorized to get a "apm.error_rate" alert for "apm"]`
-      );
-
-      expect(alertingAuthMock.ensureAuthorized).toHaveBeenCalledWith({
-        entity: 'alert',
-        consumer: 'apm',
-        operation: 'get',
-        ruleTypeId: 'apm.error_rate',
-      });
     });
   });
 });

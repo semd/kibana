@@ -4,7 +4,9 @@
  * 2.0; you may not use this file except in compliance with the Elastic License
  * 2.0.
  */
+import Boom from '@hapi/boom';
 import { PublicMethodsOf } from '@kbn/utility-types';
+import { Filter, buildEsQuery, EsQueryConfig } from '@kbn/es-query';
 import { decodeVersion, encodeHitVersion } from '@kbn/securitysolution-es-utils';
 import {
   mapConsumerToIndexName,
@@ -12,7 +14,8 @@ import {
   isValidFeatureId,
 } from '@kbn/rule-data-utils/target/alerts_as_data_rbac';
 
-import { AlertTypeParams } from '../../../alerting/server';
+import { InlineScript, QueryDslQueryContainer } from '@elastic/elasticsearch/api/types';
+import { AlertTypeParams, AlertingAuthorizationFilterType } from '../../../alerting/server';
 import {
   ReadOperations,
   AlertingAuthorization,
@@ -20,7 +23,7 @@ import {
   AlertingAuthorizationEntity,
 } from '../../../alerting/server';
 import { Logger, ElasticsearchClient } from '../../../../../src/core/server';
-import { alertAuditEvent, AlertAuditAction } from './audit_events';
+import { alertAuditEvent, AlertAuditAction, operationAlertAuditActionMap } from './audit_events';
 import { AuditLogger } from '../../../security/server';
 import {
   ALERT_STATUS,
@@ -52,9 +55,24 @@ export interface UpdateOptions<Params extends AlertTypeParams> {
   index: string;
 }
 
+export interface BulkUpdateOptions<Params extends AlertTypeParams> {
+  ids: string[] | undefined | null;
+  status: 'open' | 'closed';
+  index: string;
+  query: string | undefined | null;
+}
+
 interface GetAlertParams {
   id: string;
   index?: string;
+}
+
+interface FetchAndAuditAlertParams {
+  id: string | null | undefined;
+  query: string | null | undefined;
+  index?: string;
+  operation: WriteOperations.Update | ReadOperations.Find | ReadOperations.Get;
+  lastSortIds: Array<string | number> | undefined;
 }
 
 /**
@@ -79,61 +97,260 @@ export class AlertsClient {
     this.spaceId = this.authorization.getSpaceId();
   }
 
-  public async getAlertsIndex(
-    featureIds: string[],
-    operations: Array<ReadOperations | WriteOperations>
-  ) {
-    return this.authorization.getAugmentedRuleTypesWithAuthorization(
-      featureIds.length !== 0 ? featureIds : validFeatureIds,
-      operations,
-      AlertingAuthorizationEntity.Alert
-    );
-  }
-
-  private async fetchAlert({
+  /**
+   * This will be used as a part of the "find" api
+   * In the future we will add an "aggs" param
+   * @param param0
+   * @returns
+   */
+  private async fetchAlertAndAudit({
     id,
+    query,
     index,
-  }: GetAlertParams): Promise<(AlertType & { _version: string | undefined }) | null | undefined> {
+    operation,
+    lastSortIds = [],
+  }: FetchAndAuditAlertParams) {
     try {
       const alertSpaceId = this.spaceId;
       if (alertSpaceId == null) {
-        this.logger.error('Failed to acquire spaceId from authorization client');
-        return;
+        const errorMessage = 'Failed to acquire spaceId from authorization client';
+        this.logger.error(`fetchAlertAndAudit threw an error: ${errorMessage}`);
+        throw Boom.failedDependency(`fetchAlertAndAudit threw an error: ${errorMessage}`);
       }
+
+      const config: EsQueryConfig = {
+        allowLeadingWildcards: true,
+        queryStringOptions: { analyze_wildcard: true },
+        ignoreFilterIfFieldNotInIndex: false,
+        dateFormatTZ: 'Zulu',
+      };
+      let queryBody = {
+        query: await this.buildEsQueryWithAuthz(query, id, alertSpaceId, operation, config),
+        sort: [
+          {
+            '@timestamp': {
+              order: 'asc',
+              unmapped_type: 'date',
+            },
+          },
+        ],
+      };
+
+      // this.logger.debug(`LAST SORT IDS: ${lastSortIds}`);
+
+      if (lastSortIds.length > 0) {
+        queryBody = {
+          ...queryBody,
+          // @ts-expect-error
+          search_after: lastSortIds,
+        };
+      }
+
       const result = await this.esClient.search<ParsedTechnicalFields>({
         // Context: Originally thought of always just searching `.alerts-*` but that could
         // result in a big performance hit. If the client already knows which index the alert
         // belongs to, passing in the index will speed things up
         index: index ?? '.alerts-*',
         ignore_unavailable: true,
-        body: {
-          query: {
-            bool: {
-              filter: [{ term: { _id: id } }, { term: { [SPACE_IDS]: alertSpaceId } }],
-            },
-          },
-        },
+        // @ts-expect-error
+        body: queryBody,
         seq_no_primary_term: true,
       });
 
-      if (result == null || result.body == null || result.body.hits.hits.length === 0) {
-        return;
+      // this.logger.debug(`RESULT: ${JSON.stringify(result, null, 2)}`);
+
+      // if (result == null || result.body == null || result.body.hits.hits.length === 0) {
+      //   const errorMessage = `Unable to retrieve alert details for alert with id of "${id}" or with query "${query}" and operation ${operation}`;
+      //   this.logger.error(errorMessage);
+      //   throw Boom.notFound(errorMessage);
+      // }
+
+      if (!result?.body.hits.hits.every((hit) => isValidAlert(hit._source))) {
+        const errorMessage = `Invalid alert found with id of "${id}" or with query "${query}" and operation ${operation}`;
+        this.logger.error(errorMessage);
+        throw Boom.badData(errorMessage);
       }
 
-      if (!isValidAlert(result.body.hits.hits[0]._source)) {
-        const errorMessage = `Unable to retrieve alert details for alert with id of "${id}".`;
-        this.logger.debug(errorMessage);
-        throw new Error(errorMessage);
-      }
+      result?.body.hits.hits.map((item) =>
+        this.auditLogger?.log(
+          alertAuditEvent({
+            action: operationAlertAuditActionMap[operation],
+            id: item._id,
+            outcome: 'unknown',
+          })
+        )
+      );
 
-      return {
-        ...result.body.hits.hits[0]._source,
-        _version: encodeHitVersion(result.body.hits.hits[0]),
-      };
+      return result.body;
     } catch (error) {
-      const errorMessage = `Unable to retrieve alert with id of "${id}".`;
-      this.logger.debug(errorMessage);
-      throw error;
+      const errorMessage = `Unable to retrieve alert details for alert with id of "${id}" or with query "${query}" and operation ${operation} \nError: ${error}`;
+      this.logger.error(errorMessage);
+      throw Boom.notFound(errorMessage);
+    }
+  }
+
+  /**
+   * When an update by ids is requested, do a multi-get, ensure authz and audit alerts, then execute bulk update
+   * @param param0
+   * @returns
+   */
+  private async fetchAlertAuditOperate({
+    ids,
+    status,
+    indexName,
+    operation,
+  }: {
+    ids: string[];
+    status: 'open' | 'closed';
+    indexName: string;
+    operation: ReadOperations | WriteOperations;
+  }) {
+    try {
+      const mgetRes = await this.esClient.mget<ParsedTechnicalFields>({
+        index: indexName,
+        body: {
+          ids,
+        },
+      });
+      await Promise.all(
+        mgetRes.body.docs.map((item) => {
+          if (
+            item._source != null &&
+            item._source[RULE_ID] != null &&
+            item._source[OWNER] != null
+          ) {
+            return this.authorization.ensureAuthorized({
+              ruleTypeId: item._source[RULE_ID],
+              consumer: item._source[OWNER],
+              operation,
+              entity: AlertingAuthorizationEntity.Alert,
+            });
+          }
+        })
+      );
+
+      const bulkUpdateRequest = mgetRes.body.docs.flatMap((item) => [
+        {
+          update: {
+            _index: item._index,
+            _id: item._id,
+          },
+        },
+        {
+          doc: { [ALERT_STATUS]: status },
+        },
+      ]);
+
+      const bulkUpdateResponse = await this.esClient.bulk({
+        body: bulkUpdateRequest,
+      });
+      return bulkUpdateResponse;
+    } catch (exc) {
+      this.logger.error(`error in fetchAlertAuthzAlertOperateAlert ${exc}`);
+      throw exc;
+    }
+  }
+
+  private async buildEsQueryWithAuthz(
+    query: string | null | undefined,
+    id: string | null | undefined,
+    alertSpaceId: string,
+    operation: WriteOperations.Update | ReadOperations.Get | ReadOperations.Find,
+    config: EsQueryConfig
+  ) {
+    try {
+      const { filter: authzFilter } = await this.authorization.getFindAuthorizationFilter(
+        AlertingAuthorizationEntity.Alert,
+        {
+          type: AlertingAuthorizationFilterType.ESDSL,
+          fieldNames: { consumer: OWNER, ruleTypeId: RULE_ID },
+        },
+        operation
+      );
+      return buildEsQuery(
+        undefined,
+        { query: query == null ? `_id:${id}` : query, language: 'kuery' },
+        [
+          (authzFilter as unknown) as Filter,
+          ({ term: { [SPACE_IDS]: alertSpaceId } } as unknown) as Filter,
+        ],
+        config
+      );
+    } catch (exc) {
+      this.logger.error(exc);
+      throw Boom.expectationFailed(
+        `buildEsQueryWithAuthz threw an error: unable to get authorization filter \n ${exc}`
+      );
+    }
+  }
+
+  /**
+   * executes a search after to find alerts with query (+ authz filter)
+   * @param param0
+   * @returns
+   */
+  private async queryAndAuditAllAlerts({
+    index,
+    query,
+    operation,
+  }: {
+    index: string;
+    query: string;
+    operation: WriteOperations.Update | ReadOperations.Find | ReadOperations.Get;
+  }) {
+    let lastSortIds;
+    let hasSortIds = true;
+    const alertSpaceId = await this.spaceId;
+    if (alertSpaceId == null) {
+      this.logger.error('Failed to acquire spaceId from authorization client');
+      return;
+    }
+
+    const config: EsQueryConfig = {
+      allowLeadingWildcards: true,
+      queryStringOptions: { analyze_wildcard: true },
+      ignoreFilterIfFieldNotInIndex: false,
+      dateFormatTZ: 'Zulu',
+    };
+
+    const authorizedQuery = await this.buildEsQueryWithAuthz(
+      query,
+      null,
+      alertSpaceId,
+      operation,
+      config
+    );
+
+    while (hasSortIds) {
+      try {
+        const result = await this.fetchAlertAndAudit({
+          id: null,
+          query,
+          index,
+          operation,
+          lastSortIds,
+        });
+
+        if (lastSortIds != null && result?.hits.hits.length === 0) {
+          return { auditedAlerts: true, authorizedQuery };
+        }
+        if (result == null || result.hits.hits.length === 0) {
+          this.logger.error('RESULT WAS EMPTY');
+          return { auditedAlerts: false, authorizedQuery };
+        }
+
+        lastSortIds = getSafeSortIds(result.hits.hits[result.hits.hits.length - 1]?.sort);
+        if (lastSortIds != null && lastSortIds.length !== 0) {
+          hasSortIds = true;
+        } else {
+          hasSortIds = false;
+          return { auditedAlerts: true, authorizedQuery };
+        }
+      } catch (error) {
+        const errorMessage = `queryAndAuditAllAlerts threw an error: Unable to retrieve alerts with query "${query}" and operation ${operation} \n ${error}`;
+        this.logger.error(errorMessage);
+        throw Boom.notFound(errorMessage);
+      }
     }
   }
 
@@ -143,34 +360,22 @@ export class AlertsClient {
   }: GetAlertParams): Promise<ParsedTechnicalFields | null | undefined> {
     try {
       // first search for the alert by id, then use the alert info to check if user has access to it
-      const alert = await this.fetchAlert({
+      const alert = await this.fetchAlertAndAudit({
         id,
+        query: null,
         index,
+        operation: ReadOperations.Get,
+        lastSortIds: undefined,
       });
 
-      if (alert == null) {
-        return;
+      if (alert == null || alert.hits.hits.length === 0) {
+        const errorMessage = `Unable to retrieve alert details for alert with id of "${id}" and operation ${ReadOperations.Get}`;
+        this.logger.error(errorMessage);
+        throw Boom.notFound(errorMessage);
       }
 
-      // this.authorization leverages the alerting plugin's authorization
-      // client exposed to us for reuse
-      await this.authorization.ensureAuthorized({
-        ruleTypeId: alert[RULE_ID],
-        consumer: alert[ALERT_OWNER],
-        operation: ReadOperations.Get,
-        entity: AlertingAuthorizationEntity.Alert,
-      });
-
-      this.auditLogger?.log(
-        alertAuditEvent({
-          action: AlertAuditAction.GET,
-          id,
-        })
-      );
-
-      return alert;
+      return alert.hits.hits[0]._source;
     } catch (error) {
-      this.logger.debug(`Error fetching alert with id of "${id}"`);
       this.auditLogger?.log(
         alertAuditEvent({
           action: AlertAuditAction.GET,
@@ -189,29 +394,19 @@ export class AlertsClient {
     index,
   }: UpdateOptions<Params>) {
     try {
-      const alert = await this.fetchAlert({
+      const alert = await this.fetchAlertAndAudit({
         id,
+        query: null,
         index,
-      });
-
-      if (alert == null) {
-        return;
-      }
-
-      await this.authorization.ensureAuthorized({
-        ruleTypeId: alert[RULE_ID],
-        consumer: alert[ALERT_OWNER],
         operation: WriteOperations.Update,
-        entity: AlertingAuthorizationEntity.Alert,
+        lastSortIds: undefined,
       });
 
-      this.auditLogger?.log(
-        alertAuditEvent({
-          action: AlertAuditAction.UPDATE,
-          id,
-          outcome: 'unknown',
-        })
-      );
+      if (alert == null || alert.hits.hits.length === 0) {
+        const errorMessage = `Unable to retrieve alert details for alert with id of "${id}" and operation ${ReadOperations.Get}`;
+        this.logger.error(errorMessage);
+        throw Boom.notFound(errorMessage);
+      }
 
       const { body: response } = await this.esClient.update<ParsedTechnicalFields>({
         ...decodeVersion(_version),
@@ -241,28 +436,91 @@ export class AlertsClient {
     }
   }
 
-  public async getAuthorizedAlertsIndices(featureIds: string[]): Promise<string[] | undefined> {
-    const augmentedRuleTypes = await this.authorization.getAugmentedRuleTypesWithAuthorization(
-      featureIds,
-      [ReadOperations.Find, ReadOperations.Get, WriteOperations.Update],
-      AlertingAuthorizationEntity.Alert
-    );
+  public async bulkUpdate<Params extends AlertTypeParams = never>({
+    ids,
+    query,
+    index,
+    status,
+  }: BulkUpdateOptions<Params>) {
+    if (ids != null) {
+      // blow up
+      return this.fetchAlertAuditOperate({
+        ids,
+        status,
+        indexName: index,
+        operation: WriteOperations.Update,
+      });
+    } else if (query != null) {
+      try {
+        // execute either a query with ids or
+        // query to be executed in updateByQuery
+        // audit results of that query
+        const fetchAndAuditResponse = await this.queryAndAuditAllAlerts({
+          query,
+          index,
+          operation: WriteOperations.Update,
+        });
 
-    // As long as the user can read a minimum of one type of rule type produced by the provided feature,
-    // the user should be provided that features' alerts index.
-    // Limiting which alerts that user can read on that index will be done via the findAuthorizationFilter
-    const authorizedFeatures = new Set<string>();
-    for (const ruleType of augmentedRuleTypes.authorizedRuleTypes) {
-      authorizedFeatures.add(ruleType.producer);
-    }
+        // this.logger.debug(
+        //   `FETCH AND AUDIT RESPONSE ${JSON.stringify(fetchAndAuditResponse, null, 2)}`
+        // );
 
-    const toReturn = Array.from(authorizedFeatures).flatMap((feature) => {
-      if (isValidFeatureId(feature)) {
-        return mapConsumerToIndexName[feature];
+        if (!fetchAndAuditResponse?.auditedAlerts) {
+          throw Boom.unauthorized('Failed to audit alerts');
+        }
+
+        const result = await this.esClient.updateByQuery({
+          index,
+          conflicts: 'proceed',
+          refresh: true,
+          body: {
+            script: {
+              source: `ctx._source['kibana.rac.alert.status'] = '${status}'`,
+              lang: 'painless',
+            } as InlineScript,
+            query: fetchAndAuditResponse.authorizedQuery as Omit<QueryDslQueryContainer, 'script'>,
+          },
+          ignore_unavailable: true,
+        });
+        return result;
+      } catch (err) {
+        // TODO: Update error message
+        this.logger.error(`UPDATE ERROR: ${err}`);
+        throw err;
       }
-      return [];
-    });
+    } else {
+      throw Boom.badRequest('no ids or query were provided for updating');
+    }
+  }
 
-    return toReturn;
+  public async getAuthorizedAlertsIndices(featureIds: string[]): Promise<string[] | undefined> {
+    try {
+      const augmentedRuleTypes = await this.authorization.getAugmentedRuleTypesWithAuthorization(
+        featureIds,
+        [ReadOperations.Find, ReadOperations.Get, WriteOperations.Update],
+        AlertingAuthorizationEntity.Alert
+      );
+
+      // As long as the user can read a minimum of one type of rule type produced by the provided feature,
+      // the user should be provided that features' alerts index.
+      // Limiting which alerts that user can read on that index will be done via the findAuthorizationFilter
+      const authorizedFeatures = new Set<string>();
+      for (const ruleType of augmentedRuleTypes.authorizedRuleTypes) {
+        authorizedFeatures.add(ruleType.producer);
+      }
+
+      const toReturn = Array.from(authorizedFeatures).flatMap((feature) => {
+        if (isValidFeatureId(feature)) {
+          return mapConsumerToIndexName[feature];
+        }
+        return [];
+      });
+
+      return toReturn;
+    } catch (exc) {
+      const errMessage = `getAuthorizedAlertsIndices failed to get authorized rule types: ${exc}`;
+      this.logger.error(errMessage);
+      throw Boom.failedDependency(errMessage);
+    }
   }
 }

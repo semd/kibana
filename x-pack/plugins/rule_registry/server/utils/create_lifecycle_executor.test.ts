@@ -23,6 +23,8 @@ import {
   ALERT_STATUS,
   EVENT_ACTION,
   EVENT_KIND,
+  RULE_ID,
+  OWNER,
 } from '../../common/technical_rule_data_field_names';
 import { createRuleDataClientMock } from '../rule_data_client/create_rule_data_client_mock';
 import { createLifecycleExecutor } from './create_lifecycle_executor';
@@ -128,12 +130,16 @@ describe('createLifecycleExecutor', () => {
           {
             fields: {
               [ALERT_ID]: 'TEST_ALERT_0',
+              [OWNER]: 'CONSUMER',
+              [RULE_ID]: 'RULE_TYPE_ID',
               labels: { LABEL_0_KEY: 'LABEL_0_VALUE' }, // this must not show up in the written doc
             },
           },
           {
             fields: {
               [ALERT_ID]: 'TEST_ALERT_1',
+              [OWNER]: 'CONSUMER',
+              [RULE_ID]: 'RULE_TYPE_ID',
               labels: { LABEL_0_KEY: 'LABEL_0_VALUE' }, // this must not show up in the written doc
             },
           },
@@ -222,6 +228,8 @@ describe('createLifecycleExecutor', () => {
             fields: {
               '@timestamp': '',
               [ALERT_ID]: 'TEST_ALERT_0',
+              [OWNER]: 'CONSUMER',
+              [RULE_ID]: 'RULE_TYPE_ID',
               labels: { LABEL_0_KEY: 'LABEL_0_VALUE' }, // this must show up in the written doc
             },
           },
@@ -229,6 +237,8 @@ describe('createLifecycleExecutor', () => {
             fields: {
               '@timestamp': '',
               [ALERT_ID]: 'TEST_ALERT_1',
+              [OWNER]: 'CONSUMER',
+              [RULE_ID]: 'RULE_TYPE_ID',
               labels: { LABEL_0_KEY: 'LABEL_0_VALUE' }, // this must not show up in the written doc
             },
           },

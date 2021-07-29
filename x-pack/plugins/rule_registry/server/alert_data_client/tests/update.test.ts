@@ -29,6 +29,10 @@ const alertsClientParams: jest.Mocked<ConstructorOptions> = {
 beforeEach(() => {
   jest.resetAllMocks();
   alertingAuthMock.getSpaceId.mockImplementation(() => 'test_default_space_id');
+  // @ts-expect-error
+  alertingAuthMock.getFindAuthorizationFilter.mockImplementation(async () =>
+    Promise.resolve({ filter: [] })
+  );
 });
 
 describe('update()', () => {
@@ -167,7 +171,7 @@ describe('update()', () => {
       })
     );
     await alertsClient.update({
-      id: '1',
+      id: 'NoxgpHkBqbdrfX07MqXV',
       status: 'closed',
       _version: undefined,
       index: '.alerts-observability-apm',
@@ -181,32 +185,39 @@ describe('update()', () => {
         outcome: 'unknown',
         type: ['change'],
       },
-      message: 'User is updating alert [id=1]',
+      message: 'User is updating alert [id=NoxgpHkBqbdrfX07MqXV]',
     });
   });
 
   test(`throws an error if ES client get fails`, async () => {
-    const error = new Error('something went wrong on get');
+    const error = new Error('something went wrong on update');
     const alertsClient = new AlertsClient(alertsClientParams);
     esClientMock.search.mockRejectedValue(error);
 
     await expect(
       alertsClient.update({
-        id: '1',
+        id: 'NoxgpHkBqbdrfX07MqXV',
         status: 'closed',
         _version: undefined,
         index: '.alerts-observability-apm',
       })
-    ).rejects.toThrowErrorMatchingInlineSnapshot(`"something went wrong on get"`);
+    ).rejects.toThrowErrorMatchingInlineSnapshot(`
+            "Unable to retrieve alert details for alert with id of \\"NoxgpHkBqbdrfX07MqXV\\" or with query \\"null\\" and operation update 
+            Error: Error: something went wrong on update"
+          `);
     expect(auditLogger.log).toHaveBeenCalledWith({
-      error: { code: 'Error', message: 'something went wrong on get' },
+      error: {
+        code: 'Error',
+        message:
+          'Unable to retrieve alert details for alert with id of "NoxgpHkBqbdrfX07MqXV" or with query "null" and operation update \nError: Error: something went wrong on update',
+      },
       event: {
         action: 'alert_update',
         category: ['database'],
         outcome: 'failure',
         type: ['change'],
       },
-      message: 'Failed attempt to update alert [id=1]',
+      message: 'Failed attempt to update alert [id=NoxgpHkBqbdrfX07MqXV]',
     });
   });
 
@@ -250,7 +261,7 @@ describe('update()', () => {
 
     await expect(
       alertsClient.update({
-        id: '1',
+        id: 'NoxgpHkBqbdrfX07MqXV',
         status: 'closed',
         _version: undefined,
         index: '.alerts-observability-apm',
@@ -264,7 +275,7 @@ describe('update()', () => {
         outcome: 'failure',
         type: ['change'],
       },
-      message: 'Failed attempt to update alert [id=1]',
+      message: 'Failed attempt to update alert [id=NoxgpHkBqbdrfX07MqXV]',
     });
   });
 
@@ -325,18 +336,12 @@ describe('update()', () => {
     test('returns alert if user is authorized to update alert under the consumer', async () => {
       const alertsClient = new AlertsClient(alertsClientParams);
       const result = await alertsClient.update({
-        id: '1',
+        id: 'NoxgpHkBqbdrfX07MqXV',
         status: 'closed',
         _version: undefined,
         index: '.alerts-observability-apm',
       });
 
-      expect(alertingAuthMock.ensureAuthorized).toHaveBeenCalledWith({
-        entity: 'alert',
-        consumer: 'apm',
-        operation: 'update',
-        ruleTypeId: 'apm.error_rate',
-      });
       expect(result).toMatchInlineSnapshot(`
         Object {
           "_id": "NoxgpHkBqbdrfX07MqXV",
@@ -352,31 +357,6 @@ describe('update()', () => {
           "result": "updated",
         }
       `);
-    });
-
-    test('throws when user is not authorized to update this type of alert', async () => {
-      const alertsClient = new AlertsClient(alertsClientParams);
-      alertingAuthMock.ensureAuthorized.mockRejectedValue(
-        new Error(`Unauthorized to get a "apm.error_rate" alert for "apm"`)
-      );
-
-      await expect(
-        alertsClient.update({
-          id: '1',
-          status: 'closed',
-          _version: undefined,
-          index: '.alerts-observability-apm',
-        })
-      ).rejects.toMatchInlineSnapshot(
-        `[Error: Unauthorized to get a "apm.error_rate" alert for "apm"]`
-      );
-
-      expect(alertingAuthMock.ensureAuthorized).toHaveBeenCalledWith({
-        entity: 'alert',
-        consumer: 'apm',
-        operation: 'update',
-        ruleTypeId: 'apm.error_rate',
-      });
     });
   });
 });
