@@ -24,6 +24,7 @@ NPM_MODULE_EXTRA_FILES = [
 SRC_DEPS = [
   "@npm//tslib",
   "@npm//utility-types",
+  "@npm//@elastic/elasticsearch",
 ]
 
 TYPES_DEPS = [

@@ -10,8 +10,8 @@ import { Filter, buildEsQuery, EsQueryConfig } from '@kbn/es-query';
 import { decodeVersion, encodeHitVersion } from '@kbn/securitysolution-es-utils';
 import {
   mapConsumerToIndexName,
-  validFeatureIds,
   isValidFeatureId,
+  getSafeSortIds,
 } from '@kbn/rule-data-utils/target/alerts_as_data_rbac';
 
 import { InlineScript, QueryDslQueryContainer } from '@elastic/elasticsearch/api/types';

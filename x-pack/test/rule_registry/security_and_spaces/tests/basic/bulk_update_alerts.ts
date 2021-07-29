@@ -100,33 +100,6 @@ export default ({ getService }: FtrProviderContext) => {
       await esArchiver.unload('x-pack/test/functional/es_archives/rule_registry/alerts');
     });
 
-    // it.only(`${obsSec.username} should bulk update alerts which match query in ${SPACE1}/${SECURITY_SOLUTION_ALERT_INDEX}`, async () => {
-    //   await supertestWithoutAuth
-    //     .post(`${getSpaceUrlPrefix(SPACE1)}${TEST_URL}/bulk_update`)
-    //     .auth(obsSec.username, obsSec.password)
-    //     .set('kbn-xsrf', 'true')
-    //     .send({
-    //       status: 'closed',
-    //       query: 'kibana.rac.alert.status: open',
-    //       index: SECURITY_SOLUTION_ALERT_INDEX,
-    //     })
-    //     .expect(200);
-    // });
-
-    // it.only(`${globalRead.username} should NOT be able to update alert ${SECURITY_SOLUTION_ALERT_ID} in ${SPACE1}/${SECURITY_SOLUTION_ALERT_INDEX}`, async () => {
-    //   const res = await supertestWithoutAuth
-    //     .post(`${getSpaceUrlPrefix(SPACE1)}${TEST_URL}/bulk_update`)
-    //     .auth(globalRead.username, globalRead.password)
-    //     .set('kbn-xsrf', 'true')
-    //     .send({
-    //       ids: [SECURITY_SOLUTION_ALERT_ID],
-    //       status: 'closed',
-    //       index: SECURITY_SOLUTION_ALERT_INDEX,
-    //       // query: 'kibana.rac.alert.status: open',
-    //     });
-    //   expect([403, 404]).to.contain(res.statusCode);
-    // });
-
     function addTests({ space, authorizedUsers, unauthorizedUsers, alertId, index }: TestCase) {
       authorizedUsers.forEach(({ username, password }) => {
         it(`${username} should bulk update alert with given id ${alertId} in ${space}/${index}`, async () => {
