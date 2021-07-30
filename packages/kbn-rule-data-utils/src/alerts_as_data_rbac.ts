@@ -53,7 +53,10 @@ export const isValidFeatureId = (a: unknown): a is ValidFeatureId =>
  * @returns SortResults
  */
 export const getSafeSortIds = (sortIds: estypes.SearchSortResults | undefined) => {
-  return sortIds?.map((sortId) => {
+  if (sortIds == null) {
+    return sortIds;
+  }
+  return sortIds.map((sortId) => {
     // haven't determined when we would receive a null value for a sort id
     // but in case we do, default to sending the stringified Java max_int
     if (sortId == null || sortId === '' || sortId >= Number.MAX_SAFE_INTEGER) {
