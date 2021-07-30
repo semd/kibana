@@ -52,7 +52,7 @@ export const isValidFeatureId = (a: unknown): a is ValidFeatureId =>
  * @param sortIds estypes.SearchSortResults | undefined
  * @returns SortResults
  */
-export const getSafeSortIds = (sortIds: estypes.SearchSortResults | undefined) => {
+export const getSafeSortIds = (sortIds: estypes.SearchSortResults | null | undefined) => {
   if (sortIds == null) {
     return sortIds;
   }

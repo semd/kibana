@@ -136,7 +136,7 @@ const timelineAlertsSearchStrategy = <T extends TimelineFactoryQueryTypes>({
   // is why we are pulling from alerting, not ther alertsClient here
   const alertingAuthorizationClient = alerting.getAlertingAuthorizationWithRequest(deps.request);
   const getAuthFilter = async () =>
-    alertingAuthorizationClient.getFindAuthorizationFilter(AlertingAuthorizationEntity.Alert, {
+    alertingAuthorizationClient.getAuthorizationFilter(AlertingAuthorizationEntity.Alert, {
       type: AlertingAuthorizationFilterType.ESDSL,
       // Not passing in values, these are the paths for these fields
       fieldNames: {

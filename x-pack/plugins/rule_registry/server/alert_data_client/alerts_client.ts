@@ -249,7 +249,7 @@ export class AlertsClient {
     config: EsQueryConfig
   ) {
     try {
-      const { filter: authzFilter } = await this.authorization.getFindAuthorizationFilter(
+      const { filter: authzFilter } = await this.authorization.getAuthorizationFilter(
         AlertingAuthorizationEntity.Alert,
         {
           type: AlertingAuthorizationFilterType.ESDSL,

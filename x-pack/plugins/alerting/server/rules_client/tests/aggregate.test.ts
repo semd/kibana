@@ -67,7 +67,7 @@ describe('aggregate()', () => {
     },
   ]);
   beforeEach(() => {
-    authorization.getFindAuthorizationFilter.mockResolvedValue({
+    authorization.getAuthorizationFilter.mockResolvedValue({
       ensureRuleTypeIsAuthorized() {},
       logSuccessfulAuthorization() {},
     });

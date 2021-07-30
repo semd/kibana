@@ -274,7 +274,7 @@ export class AlertingAuthorization {
     }
   }
 
-  public async getFindAuthorizationFilter(
+  public async getAuthorizationFilter(
     authorizationEntity: AlertingAuthorizationEntity,
     filterOpts: AlertingAuthorizationFilterOpts,
     operation?: WriteOperations | ReadOperations

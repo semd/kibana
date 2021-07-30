@@ -30,7 +30,7 @@ beforeEach(() => {
   jest.resetAllMocks();
   alertingAuthMock.getSpaceId.mockImplementation(() => 'test_default_space_id');
   // @ts-expect-error
-  alertingAuthMock.getFindAuthorizationFilter.mockImplementation(async () =>
+  alertingAuthMock.getAuthorizationFilter.mockImplementation(async () =>
     Promise.resolve({ filter: [] })
   );
 });
