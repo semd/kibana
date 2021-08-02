@@ -452,7 +452,12 @@ export class AlertsClient {
           refresh: true,
           body: {
             script: {
-              source: `ctx._source['kibana.rac.alert.status'] = '${status}'`,
+              source: `if (ctx._source['${ALERT_STATUS}'] != null) {
+                ctx._source['${ALERT_STATUS}'] = '${status}'
+              }
+              if (ctx._source['signal.status'] != null) {
+                ctx._source['signal.status'] = '${status}'
+              }`,
               lang: 'painless',
             } as InlineScript,
             query: fetchAndAuditResponse.authorizedQuery as Omit<QueryDslQueryContainer, 'script'>,
