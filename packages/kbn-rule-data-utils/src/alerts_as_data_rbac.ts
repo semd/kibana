@@ -26,6 +26,7 @@ export const ALERTS_CONSUMERS = {
   SYNTHETICS: 'synthetics',
 } as const;
 export type ALERTS_CONSUMERS = typeof ALERTS_CONSUMERS[keyof typeof ALERTS_CONSUMERS];
+export type STATUS_VALUES = 'open' | 'acknowledged' | 'closed';
 
 export const mapConsumerToIndexName: Record<ALERTS_CONSUMERS, string | string[]> = {
   apm: '.alerts-observability-apm',

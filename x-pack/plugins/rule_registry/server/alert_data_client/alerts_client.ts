@@ -12,6 +12,7 @@ import {
   mapConsumerToIndexName,
   isValidFeatureId,
   getSafeSortIds,
+  STATUS_VALUES,
 } from '@kbn/rule-data-utils/target/alerts_as_data_rbac';
 
 import { InlineScript, QueryDslQueryContainer } from '@elastic/elasticsearch/api/types';
@@ -57,7 +58,7 @@ export interface UpdateOptions<Params extends AlertTypeParams> {
 
 export interface BulkUpdateOptions<Params extends AlertTypeParams> {
   ids: string[] | undefined | null;
-  status: 'open' | 'closed';
+  status: STATUS_VALUES;
   index: string;
   query: string | undefined | null;
 }
@@ -191,7 +192,7 @@ export class AlertsClient {
     operation,
   }: {
     ids: string[];
-    status: 'open' | 'closed';
+    status: STATUS_VALUES;
     indexName: string;
     operation: ReadOperations | WriteOperations;
   }) {
