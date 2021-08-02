@@ -7,6 +7,7 @@
  */
 
 import type { estypes } from '@elastic/elasticsearch';
+import type { EsQueryConfig } from '@kbn/es-query';
 
 /**
  * registering a new instance of the rule data client
@@ -65,4 +66,33 @@ export const getSafeSortIds = (sortIds: estypes.SearchSortResults | null | undef
     }
     return sortId;
   });
+};
+
+interface GetEsQueryConfigParamType {
+  allowLeadingWildcards?: EsQueryConfig['allowLeadingWildcards'];
+  queryStringOptions?: EsQueryConfig['queryStringOptions'];
+  ignoreFilterIfFieldNotInIndex?: EsQueryConfig['ignoreFilterIfFieldNotInIndex'];
+  dateFormatTZ?: EsQueryConfig['dateFormatTZ'];
+}
+
+type ConfigKeys = keyof GetEsQueryConfigParamType;
+
+export const getEsQueryConfig = (params?: GetEsQueryConfigParamType): EsQueryConfig => {
+  const defaultConfigValues = {
+    allowLeadingWildcards: true,
+    queryStringOptions: { analyze_wildcard: true },
+    ignoreFilterIfFieldNotInIndex: false,
+    dateFormatTZ: 'Zulu',
+  };
+  if (params == null) {
+    return defaultConfigValues;
+  }
+  const paramKeysWithValues = Object.keys(params).reduce((acc: EsQueryConfig, key) => {
+    const configKey = key as ConfigKeys;
+    if (params[configKey] != null) {
+      return { [key]: params[configKey], ...acc };
+    }
+    return { [key]: defaultConfigValues[configKey], ...acc };
+  }, {} as EsQueryConfig);
+  return paramKeysWithValues;
 };

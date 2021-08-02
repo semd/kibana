@@ -13,6 +13,7 @@ import {
   isValidFeatureId,
   getSafeSortIds,
   STATUS_VALUES,
+  getEsQueryConfig,
 } from '@kbn/rule-data-utils/target/alerts_as_data_rbac';
 
 import { InlineScript, QueryDslQueryContainer } from '@elastic/elasticsearch/api/types';
@@ -119,12 +120,8 @@ export class AlertsClient {
         throw Boom.failedDependency(`fetchAlertAndAudit threw an error: ${errorMessage}`);
       }
 
-      const config: EsQueryConfig = {
-        allowLeadingWildcards: true,
-        queryStringOptions: { analyze_wildcard: true },
-        ignoreFilterIfFieldNotInIndex: false,
-        dateFormatTZ: 'Zulu',
-      };
+      const config = getEsQueryConfig();
+
       let queryBody = {
         query: await this.buildEsQueryWithAuthz(query, id, alertSpaceId, operation, config),
         sort: [
@@ -237,7 +234,7 @@ export class AlertsClient {
       });
       return bulkUpdateResponse;
     } catch (exc) {
-      this.logger.error(`error in fetchAlertAuthzAlertOperateAlert ${exc}`);
+      this.logger.error(`error in fetchAlertAuditOperate ${exc}`);
       throw exc;
     }
   }
@@ -297,12 +294,7 @@ export class AlertsClient {
       return;
     }
 
-    const config: EsQueryConfig = {
-      allowLeadingWildcards: true,
-      queryStringOptions: { analyze_wildcard: true },
-      ignoreFilterIfFieldNotInIndex: false,
-      dateFormatTZ: 'Zulu',
-    };
+    const config = getEsQueryConfig();
 
     const authorizedQuery = await this.buildEsQueryWithAuthz(
       query,
@@ -345,10 +337,7 @@ export class AlertsClient {
     }
   }
 
-  public async get({
-    id,
-    index,
-  }: GetAlertParams): Promise<ParsedTechnicalFields | null | undefined> {
+  public async get({ id, index }: GetAlertParams) {
     try {
       // first search for the alert by id, then use the alert info to check if user has access to it
       const alert = await this.fetchAlertAndAudit({
@@ -365,6 +354,7 @@ export class AlertsClient {
         throw Boom.notFound(errorMessage);
       }
 
+      // move away from pulling data from _source in the future
       return alert.hits.hits[0]._source;
     } catch (error) {
       this.auditLogger?.log(
