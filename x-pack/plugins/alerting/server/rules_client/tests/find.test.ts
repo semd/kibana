@@ -75,7 +75,7 @@ describe('find()', () => {
     },
   ]);
   beforeEach(() => {
-    authorization.getAuthorizationFilter.mockResolvedValue({
+    authorization.getFindAuthorizationFilter.mockResolvedValue({
       ensureRuleTypeIsAuthorized() {},
       logSuccessfulAuthorization() {},
     });
@@ -193,7 +193,7 @@ describe('find()', () => {
 
   test('should call useSavedObjectReferences.injectReferences if defined for rule type', async () => {
     jest.resetAllMocks();
-    authorization.getAuthorizationFilter.mockResolvedValue({
+    authorization.getFindAuthorizationFilter.mockResolvedValue({
       ensureRuleTypeIsAuthorized() {},
       logSuccessfulAuthorization() {},
     });
@@ -389,7 +389,7 @@ describe('find()', () => {
 
   test('throws an error if useSavedObjectReferences.injectReferences throws an error', async () => {
     jest.resetAllMocks();
-    authorization.getAuthorizationFilter.mockResolvedValue({
+    authorization.getFindAuthorizationFilter.mockResolvedValue({
       ensureRuleTypeIsAuthorized() {},
       logSuccessfulAuthorization() {},
     });
@@ -525,7 +525,7 @@ describe('find()', () => {
       const filter = esKuery.fromKueryExpression(
         '((alert.attributes.alertTypeId:myType and alert.attributes.consumer:myApp) or (alert.attributes.alertTypeId:myOtherType and alert.attributes.consumer:myApp) or (alert.attributes.alertTypeId:myOtherType and alert.attributes.consumer:myOtherApp))'
       );
-      authorization.getAuthorizationFilter.mockResolvedValue({
+      authorization.getFindAuthorizationFilter.mockResolvedValue({
         filter,
         ensureRuleTypeIsAuthorized() {},
         logSuccessfulAuthorization() {},
@@ -538,12 +538,12 @@ describe('find()', () => {
       expect(options.filter).toEqual(
         nodeTypes.function.buildNode('and', [esKuery.fromKueryExpression('someTerm'), filter])
       );
-      expect(authorization.getAuthorizationFilter).toHaveBeenCalledTimes(1);
+      expect(authorization.getFindAuthorizationFilter).toHaveBeenCalledTimes(1);
     });
 
     test('throws if user is not authorized to find any types', async () => {
       const rulesClient = new RulesClient(rulesClientParams);
-      authorization.getAuthorizationFilter.mockRejectedValue(new Error('not authorized'));
+      authorization.getFindAuthorizationFilter.mockRejectedValue(new Error('not authorized'));
       await expect(rulesClient.find({ options: {} })).rejects.toThrowErrorMatchingInlineSnapshot(
         `"not authorized"`
       );
@@ -552,7 +552,7 @@ describe('find()', () => {
     test('ensures authorization even when the fields required to authorize are omitted from the find', async () => {
       const ensureRuleTypeIsAuthorized = jest.fn();
       const logSuccessfulAuthorization = jest.fn();
-      authorization.getAuthorizationFilter.mockResolvedValue({
+      authorization.getFindAuthorizationFilter.mockResolvedValue({
         ensureRuleTypeIsAuthorized,
         logSuccessfulAuthorization,
       });
@@ -625,7 +625,7 @@ describe('find()', () => {
 
     test('logs audit event when not authorised to search rules', async () => {
       const rulesClient = new RulesClient({ ...rulesClientParams, auditLogger });
-      authorization.getAuthorizationFilter.mockRejectedValue(new Error('Unauthorized'));
+      authorization.getFindAuthorizationFilter.mockRejectedValue(new Error('Unauthorized'));
 
       await expect(rulesClient.find()).rejects.toThrow();
       expect(auditLogger.log).toHaveBeenCalledWith(
@@ -644,7 +644,7 @@ describe('find()', () => {
 
     test('logs audit event when not authorised to search rule type', async () => {
       const rulesClient = new RulesClient({ ...rulesClientParams, auditLogger });
-      authorization.getAuthorizationFilter.mockResolvedValue({
+      authorization.getFindAuthorizationFilter.mockResolvedValue({
         ensureRuleTypeIsAuthorized: jest.fn(() => {
           throw new Error('Unauthorized');
         }),

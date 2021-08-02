@@ -480,7 +480,7 @@ export class RulesClient {
   }: { options?: FindOptions } = {}): Promise<FindResult<Params>> {
     let authorizationTuple;
     try {
-      authorizationTuple = await this.authorization.getAuthorizationFilter(
+      authorizationTuple = await this.authorization.getFindAuthorizationFilter(
         AlertingAuthorizationEntity.Rule,
         alertingAuthorizationFilterOpts
       );
@@ -571,7 +571,7 @@ export class RulesClient {
         const {
           filter: authorizationFilter,
           logSuccessfulAuthorization,
-        } = await this.authorization.getAuthorizationFilter(
+        } = await this.authorization.getFindAuthorizationFilter(
           AlertingAuthorizationEntity.Rule,
           alertingAuthorizationFilterOpts
         );

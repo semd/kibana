@@ -901,7 +901,7 @@ describe('AlertingAuthorization', () => {
     });
   });
 
-  describe('getAuthorizationFilter', () => {
+  describe('getFindAuthorizationFilter', () => {
     const myOtherAppAlertType: RegistryRuleType = {
       actionGroups: [],
       actionVariables: undefined,
@@ -952,7 +952,7 @@ describe('AlertingAuthorization', () => {
       const {
         filter,
         ensureRuleTypeIsAuthorized,
-      } = await alertAuthorization.getAuthorizationFilter(AlertingAuthorizationEntity.Rule, {
+      } = await alertAuthorization.getFindAuthorizationFilter(AlertingAuthorizationEntity.Rule, {
         type: AlertingAuthorizationFilterType.KQL,
         fieldNames: {
           ruleTypeId: 'ruleId',
@@ -972,7 +972,7 @@ describe('AlertingAuthorization', () => {
         getSpaceId,
         exemptConsumerIds,
       });
-      const { ensureRuleTypeIsAuthorized } = await alertAuthorization.getAuthorizationFilter(
+      const { ensureRuleTypeIsAuthorized } = await alertAuthorization.getFindAuthorizationFilter(
         AlertingAuthorizationEntity.Rule,
         {
           type: AlertingAuthorizationFilterType.KQL,
@@ -1010,7 +1010,7 @@ describe('AlertingAuthorization', () => {
       ruleTypeRegistry.list.mockReturnValue(setOfAlertTypes);
       expect(
         (
-          await alertAuthorization.getAuthorizationFilter(AlertingAuthorizationEntity.Rule, {
+          await alertAuthorization.getFindAuthorizationFilter(AlertingAuthorizationEntity.Rule, {
             type: AlertingAuthorizationFilterType.KQL,
             fieldNames: {
               ruleTypeId: 'path.to.rule.id',
@@ -1071,7 +1071,7 @@ describe('AlertingAuthorization', () => {
         exemptConsumerIds,
       });
       ruleTypeRegistry.list.mockReturnValue(setOfAlertTypes);
-      const { ensureRuleTypeIsAuthorized } = await alertAuthorization.getAuthorizationFilter(
+      const { ensureRuleTypeIsAuthorized } = await alertAuthorization.getFindAuthorizationFilter(
         AlertingAuthorizationEntity.Alert,
         {
           type: AlertingAuthorizationFilterType.KQL,
@@ -1145,7 +1145,7 @@ describe('AlertingAuthorization', () => {
         exemptConsumerIds,
       });
       ruleTypeRegistry.list.mockReturnValue(setOfAlertTypes);
-      const { ensureRuleTypeIsAuthorized } = await alertAuthorization.getAuthorizationFilter(
+      const { ensureRuleTypeIsAuthorized } = await alertAuthorization.getFindAuthorizationFilter(
         AlertingAuthorizationEntity.Rule,
         {
           type: AlertingAuthorizationFilterType.KQL,
@@ -1223,7 +1223,7 @@ describe('AlertingAuthorization', () => {
       const {
         ensureRuleTypeIsAuthorized,
         logSuccessfulAuthorization,
-      } = await alertAuthorization.getAuthorizationFilter(AlertingAuthorizationEntity.Rule, {
+      } = await alertAuthorization.getFindAuthorizationFilter(AlertingAuthorizationEntity.Rule, {
         type: AlertingAuthorizationFilterType.KQL,
         fieldNames: {
           ruleTypeId: 'ruleId',
@@ -1272,7 +1272,7 @@ describe('AlertingAuthorization', () => {
         getSpaceId,
         exemptConsumerIds,
       });
-      const { filter } = await alertAuthorization.getAuthorizationFilter(
+      const { filter } = await alertAuthorization.getFindAuthorizationFilter(
         AlertingAuthorizationEntity.Alert,
         {
           type: AlertingAuthorizationFilterType.ESDSL,
