@@ -5,7 +5,14 @@
  * 2.0.
  */
 
-import { ALERT_STATUS, ALERT_WORKFLOW_STATUS } from '@kbn/rule-data-utils';
+import {
+  ALERT_STATUS,
+  ALERT_WORKFLOW_STATUS,
+  TIMESTAMP,
+  RULE_ID,
+  ALERT_OWNER,
+  SPACE_IDS,
+} from '@kbn/rule-data-utils';
 import { SearchTypes } from '../../../../../../common/detection_engine/types';
 import { RulesSchema } from '../../../../../../common/detection_engine/schemas/response/rules_schema';
 import { isEventTypeSignal } from '../../../signals/build_event_type_signal';
@@ -85,7 +92,11 @@ export const removeClashes = (doc: BaseSignalHit): BaseSignalHit => {
  * @param docs The parent signals/events of the new signal to be built.
  * @param rule The rule that is generating the new signal.
  */
-export const buildAlert = (doc: SignalSourceHit, rule: RulesSchema) => {
+export const buildAlert = (
+  spaceId: string | null | undefined,
+  doc: SignalSourceHit,
+  rule: RulesSchema
+) => {
   const removedClashes = removeClashes(doc);
   const parent = buildParent(removedClashes);
   const ancestors = buildAncestors(removedClashes);
@@ -96,6 +107,10 @@ export const buildAlert = (doc: SignalSourceHit, rule: RulesSchema) => {
   const signalRule = signal?.rule;
 
   return {
+    [TIMESTAMP]: new Date().toISOString(),
+    [RULE_ID]: rule.id,
+    [ALERT_OWNER]: 'siem',
+    [SPACE_IDS]: [spaceId],
     'kibana.alert.ancestors': ancestors as object[],
     [ALERT_STATUS]: 'open',
     [ALERT_WORKFLOW_STATUS]: 'open',

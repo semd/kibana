@@ -126,7 +126,7 @@ export default ({ getService }: FtrProviderContext) => {
             .set('kbn-xsrf', 'true')
             .send({
               status: 'closed',
-              query: 'kibana.rac.alert.status: open',
+              query: 'kibana.alert.status: open',
               index,
             });
           expect(updated.statusCode).to.eql(200);

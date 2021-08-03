@@ -13,9 +13,11 @@ import type { ConfigType } from '../../../../config';
 import { WrappedRACAlert } from '../types';
 
 export const wrapHitsFactory = ({
+  spaceId,
   ruleSO,
   mergeStrategy,
 }: {
+  spaceId: string | null | undefined;
   ruleSO: SearchAfterAndBulkCreateParams['ruleSO'];
   mergeStrategy: ConfigType['alertMergeStrategy'];
 }): WrapHits => (events) => {
@@ -28,7 +30,7 @@ export const wrapHitsFactory = ({
         String(doc._version),
         ruleSO.attributes.params.ruleId ?? ''
       ),
-      _source: buildBulkBody(ruleSO, doc as SignalSourceHit, mergeStrategy),
+      _source: buildBulkBody(spaceId, ruleSO, doc as SignalSourceHit, mergeStrategy),
     },
   ]);
 

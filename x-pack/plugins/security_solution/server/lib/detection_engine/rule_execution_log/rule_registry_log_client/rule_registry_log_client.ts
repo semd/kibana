@@ -6,7 +6,14 @@
  */
 
 import { estypes } from '@elastic/elasticsearch';
-import { EVENT_ACTION, EVENT_KIND, RULE_ID, SPACE_IDS, TIMESTAMP } from '@kbn/rule-data-utils';
+import {
+  EVENT_ACTION,
+  EVENT_KIND,
+  RULE_ID,
+  SPACE_IDS,
+  TIMESTAMP,
+  ALERT_OWNER,
+} from '@kbn/rule-data-utils';
 import { once } from 'lodash/fp';
 import moment from 'moment';
 import { RuleDataClient, RuleDataPluginService } from '../../../../../../rule_registry/server';
@@ -201,6 +208,14 @@ export class RuleRegistryLogClient implements IRuleRegistryLogClient {
     );
   }
 
+  // { [x: string]: string | string[] | ExecutionMetricValue<T>;
+  //   [x: number]: string;
+  //   "kibana.space_ids": string[];
+  //   "event.action": T;
+  //   "event.kind": string;
+  //   "rule.id": string;
+  //   "@timestamp": string; }
+
   public async logExecutionMetric<T extends ExecutionMetric>({
     ruleId,
     namespace,
@@ -216,6 +231,7 @@ export class RuleRegistryLogClient implements IRuleRegistryLogClient {
         [getMetricField(metric)]: value,
         [RULE_ID]: ruleId,
         [TIMESTAMP]: new Date().toISOString(),
+        [ALERT_OWNER]: 'siem',
       },
       namespace
     );
@@ -239,6 +255,7 @@ export class RuleRegistryLogClient implements IRuleRegistryLogClient {
         [RULE_STATUS_SEVERITY]: statusSeverityDict[newStatus],
         [RULE_STATUS]: newStatus,
         [TIMESTAMP]: new Date().toISOString(),
+        [ALERT_OWNER]: 'siem',
       },
       namespace
     );

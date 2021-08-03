@@ -38,10 +38,13 @@ import { ParsedTechnicalFields } from '../../common/parse_technical_fields';
 // TODO: Fix typings https://github.com/elastic/kibana/issues/101776
 type NonNullableProps<Obj extends {}, Props extends keyof Obj> = Omit<Obj, Props> &
   { [K in Props]-?: NonNullable<Obj[K]> };
-type AlertType = NonNullableProps<ParsedTechnicalFields, 'rule.id' | 'kibana.alert.owner'>;
+type AlertType = NonNullableProps<
+  ParsedTechnicalFields,
+  typeof RULE_ID | typeof ALERT_OWNER | typeof SPACE_IDS
+>;
 
 const isValidAlert = (source?: ParsedTechnicalFields): source is AlertType => {
-  return source?.[RULE_ID] != null && source?.[ALERT_OWNER] != null;
+  return source?.[RULE_ID] != null && source?.[ALERT_OWNER] != null && source?.[SPACE_IDS] != null;
 };
 export interface ConstructorOptions {
   logger: Logger;
@@ -205,11 +208,11 @@ export class AlertsClient {
           if (
             item._source != null &&
             item._source[RULE_ID] != null &&
-            item._source[OWNER] != null
+            item._source[ALERT_OWNER] != null
           ) {
             return this.authorization.ensureAuthorized({
               ruleTypeId: item._source[RULE_ID],
-              consumer: item._source[OWNER],
+              consumer: item._source[ALERT_OWNER],
               operation,
               entity: AlertingAuthorizationEntity.Alert,
             });
@@ -251,7 +254,7 @@ export class AlertsClient {
         AlertingAuthorizationEntity.Alert,
         {
           type: AlertingAuthorizationFilterType.ESDSL,
-          fieldNames: { consumer: OWNER, ruleTypeId: RULE_ID },
+          fieldNames: { consumer: ALERT_OWNER, ruleTypeId: RULE_ID },
         },
         operation
       );

@@ -77,10 +77,9 @@ describe('get()', () => {
     const result = await alertsClient.get({ id: '1', index: '.alerts-observability-apm' });
     expect(result).toMatchInlineSnapshot(`
       Object {
-        "_version": "WzM2MiwyXQ==",
-        "${ALERT_OWNER}": "apm",
-        "${ALERT_STATUS}": "open",
-        "${SPACE_IDS}": Array [
+        "kibana.alert.owner": "apm",
+        "kibana.alert.status": "open",
+        "kibana.space_ids": Array [
           "test_default_space_id",
         ],
         "message": "hello world 1",
@@ -254,10 +253,9 @@ describe('get()', () => {
 
       expect(result).toMatchInlineSnapshot(`
         Object {
-          "_version": "WzM2MiwyXQ==",
-          "${ALERT_OWNER}": "apm",
-          "${ALERT_STATUS}": "open",
-          "${SPACE_IDS}": Array [
+          "kibana.alert.owner": "apm",
+          "kibana.alert.status": "open",
+          "kibana.space_ids": Array [
             "test_default_space_id",
           ],
           "message": "hello world 1",

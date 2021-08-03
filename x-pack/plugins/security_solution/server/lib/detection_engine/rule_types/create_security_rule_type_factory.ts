@@ -189,6 +189,7 @@ export const createSecurityRuleTypeFactory: CreateSecurityRuleTypeFactory = ({
         );
 
         const wrapHits = wrapHitsFactory({
+          spaceId,
           ruleSO,
           mergeStrategy,
         });

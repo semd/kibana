@@ -24,6 +24,7 @@ import { filterSource } from './filter_source';
  * @returns The body that can be added to a bulk call for inserting the signal.
  */
 export const buildBulkBody = (
+  spaceId: string | null | undefined,
   ruleSO: SavedObject<AlertAttributes>,
   doc: SignalSourceHit,
   mergeStrategy: ConfigType['alertMergeStrategy']
@@ -31,10 +32,11 @@ export const buildBulkBody = (
   const mergedDoc = getMergeStrategy(mergeStrategy)({ doc });
   const rule = buildRuleWithOverrides(ruleSO, mergedDoc._source ?? {});
   const filteredSource = filterSource(mergedDoc);
-  return {
+  const toReturn = {
     ...filteredSource,
-    ...buildAlert(mergedDoc, rule),
+    ...buildAlert(spaceId, mergedDoc, rule),
     ...additionalAlertFields(mergedDoc),
-    '@timestamp': new Date().toISOString(),
   };
+  // TODO: fix this type issue introduced here: https://github.com/elastic/kibana/pull/105096
+  return (toReturn as unknown) as RACAlert;
 };

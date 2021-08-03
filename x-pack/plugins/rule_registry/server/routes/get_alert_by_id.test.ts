@@ -12,6 +12,7 @@ import {
   ALERT_STATUS,
   CONSUMERS,
   ECS_VERSION,
+  SPACE_IDS,
   RULE_ID,
   TIMESTAMP,
   VERSION,
@@ -33,6 +34,7 @@ const getMockAlert = (): ParsedTechnicalFields => ({
   [ALERT_OWNER]: 'apm',
   [ALERT_STATUS]: 'open',
   [ALERT_RULE_RISK_SCORE]: 20,
+  [SPACE_IDS]: ['fake-space-id'],
   [ALERT_RULE_SEVERITY]: 'warning',
 });
 
