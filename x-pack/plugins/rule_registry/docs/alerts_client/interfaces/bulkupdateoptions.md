@@ -25,7 +25,7 @@
 
 #### Defined in
 
-[alerts_client.ts:59](https://github.com/elastic/kibana/blob/8860188e2d5/x-pack/plugins/rule_registry/server/alert_data_client/alerts_client.ts#L59)
+[alerts_client.ts:61](https://github.com/elastic/kibana/blob/84a50dc4bb6/x-pack/plugins/rule_registry/server/alert_data_client/alerts_client.ts#L61)
 
 ___
 
@@ -35,7 +35,7 @@ ___
 
 #### Defined in
 
-[alerts_client.ts:61](https://github.com/elastic/kibana/blob/8860188e2d5/x-pack/plugins/rule_registry/server/alert_data_client/alerts_client.ts#L61)
+[alerts_client.ts:63](https://github.com/elastic/kibana/blob/84a50dc4bb6/x-pack/plugins/rule_registry/server/alert_data_client/alerts_client.ts#L63)
 
 ___
 
@@ -45,14 +45,14 @@ ___
 
 #### Defined in
 
-[alerts_client.ts:62](https://github.com/elastic/kibana/blob/8860188e2d5/x-pack/plugins/rule_registry/server/alert_data_client/alerts_client.ts#L62)
+[alerts_client.ts:64](https://github.com/elastic/kibana/blob/84a50dc4bb6/x-pack/plugins/rule_registry/server/alert_data_client/alerts_client.ts#L64)
 
 ___
 
 ### status
 
-• **status**: ``"open"`` \| ``"closed"``
+• **status**: `STATUS\_VALUES`
 
 #### Defined in
 
-[alerts_client.ts:60](https://github.com/elastic/kibana/blob/8860188e2d5/x-pack/plugins/rule_registry/server/alert_data_client/alerts_client.ts#L60)
+[alerts_client.ts:62](https://github.com/elastic/kibana/blob/84a50dc4bb6/x-pack/plugins/rule_registry/server/alert_data_client/alerts_client.ts#L62)
