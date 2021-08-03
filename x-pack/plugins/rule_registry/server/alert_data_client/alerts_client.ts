@@ -317,9 +317,13 @@ export class AlertsClient {
         if (lastSortIds != null && result?.hits.hits.length === 0) {
           return { auditedAlerts: true, authorizedQuery };
         }
-        if (result == null || result.hits.hits.length === 0) {
+        if (result == null) {
           this.logger.error('RESULT WAS EMPTY');
           return { auditedAlerts: false, authorizedQuery };
+        }
+        if (result.hits.hits.length === 0) {
+          this.logger.error('Search resulted in no hits');
+          return { auditedAlerts: true, authorizedQuery };
         }
 
         lastSortIds = getSafeSortIds(result.hits.hits[result.hits.hits.length - 1]?.sort);

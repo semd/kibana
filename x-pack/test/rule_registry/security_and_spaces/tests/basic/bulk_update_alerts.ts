@@ -104,7 +104,7 @@ export default ({ getService }: FtrProviderContext) => {
       authorizedUsers.forEach(({ username, password }) => {
         it(`${username} should bulk update alert with given id ${alertId} in ${space}/${index}`, async () => {
           await esArchiver.load('x-pack/test/functional/es_archives/rule_registry/alerts'); // since this is a success case, reload the test data immediately beforehand
-          await supertestWithoutAuth
+          const { body: updated } = await supertestWithoutAuth
             .post(`${getSpaceUrlPrefix(space)}${TEST_URL}/bulk_update`)
             .auth(username, password)
             .set('kbn-xsrf', 'true')
@@ -112,12 +112,15 @@ export default ({ getService }: FtrProviderContext) => {
               ids: [alertId],
               status: 'closed',
               index,
-            })
-            .expect(200);
+            });
+          expect(updated.statusCode).to.eql(200);
+          const items = updated.body.items;
+          // @ts-expect-error
+          items.map((item) => expect(item.update.result).to.eql('updated'));
         });
 
         it(`${username} should bulk update alerts which match query in ${space}/${index}`, async () => {
-          await supertestWithoutAuth
+          const { body: updated } = await supertestWithoutAuth
             .post(`${getSpaceUrlPrefix(space)}${TEST_URL}/bulk_update`)
             .auth(username, password)
             .set('kbn-xsrf', 'true')
@@ -125,8 +128,9 @@ export default ({ getService }: FtrProviderContext) => {
               status: 'closed',
               query: 'kibana.rac.alert.status: open',
               index,
-            })
-            .expect(200);
+            });
+          expect(updated.statusCode).to.eql(200);
+          expect(updated.body.updated).to.greaterThan(0);
         });
       });
 
