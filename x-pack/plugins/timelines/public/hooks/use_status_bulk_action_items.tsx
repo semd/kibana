@@ -24,6 +24,7 @@ export interface SetEventsDeletedProps {
 
 export interface StatusBulkActionsProps {
   eventIds: string[];
+  indexNames: string[];
   currentStatus?: AlertStatus;
   query?: string;
   setEventsLoading: (param: SetEventsLoadingProps) => void;
@@ -38,6 +39,7 @@ export const getUpdateAlertsQuery = (eventIds: Readonly<string[]>) => {
 
 export const useStatusBulkActionItems = ({
   eventIds,
+  indexNames,
   currentStatus,
   query,
   setEventsLoading,
@@ -51,9 +53,12 @@ export const useStatusBulkActionItems = ({
     async (status: AlertStatus) => {
       try {
         setEventsLoading({ eventIds, isLoading: true });
-
-        const queryObject = query ? JSON.parse(query) : getUpdateAlertsQuery(eventIds);
-        const response = await updateAlertStatus({ query: queryObject, status });
+        const idsOrQuery = query ? { query } : { ids: eventIds };
+        const response = await updateAlertStatus({
+          index: indexNames.join(','),
+          status,
+          ...idsOrQuery,
+        });
         // TODO: Only delete those that were successfully updated from updatedRules
         setEventsDeleted({ eventIds, isDeleted: true });
 
@@ -70,6 +75,7 @@ export const useStatusBulkActionItems = ({
     },
     [
       eventIds,
+      indexNames,
       query,
       setEventsLoading,
       updateAlertStatus,

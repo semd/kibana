@@ -42,6 +42,7 @@ export const AlertStatusBulkActionsComponent = React.memo<StatefulAlertStatusBul
     id,
     totalItems,
     filterStatus,
+    indexNames,
     selectedEventIds,
     isSelectAllChecked,
     clearSelected,
@@ -147,6 +148,7 @@ export const AlertStatusBulkActionsComponent = React.memo<StatefulAlertStatusBul
     const statusBulkActionItems = useStatusBulkActionItems({
       currentStatus: filterStatus,
       eventIds: Object.keys(selectedEventIds),
+      indexNames,
       setEventsLoading,
       setEventsDeleted,
       onUpdateSuccess: onAlertStatusUpdateSuccess,
@@ -174,11 +176,12 @@ const makeMapStateToProps = () => {
   const getTGrid = tGridSelectors.getTGridByIdSelector();
   const mapStateToProps = (state: TimelineState, { id }: OwnProps) => {
     const timeline: TGridModel = getTGrid(state, id);
-    const { selectedEventIds, isSelectAllChecked } = timeline;
+    const { selectedEventIds, isSelectAllChecked, indexNames } = timeline;
 
     return {
       isSelectAllChecked,
       selectedEventIds,
+      indexNames,
     };
   };
   return mapStateToProps;

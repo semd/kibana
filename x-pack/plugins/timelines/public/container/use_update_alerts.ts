@@ -9,7 +9,7 @@ import { UpdateDocumentByQueryResponse } from 'elasticsearch';
 import { useKibana } from '../../../../../src/plugins/kibana_react/public';
 import { AlertStatus } from '../../../timelines/common';
 
-export const DETECTION_ENGINE_SIGNALS_STATUS_URL = '/api/detection_engine/signals/status';
+export const RAC_BULK_UPDATE_STATUS_URL = '/internal/rac/alerts/bulk_update';
 
 /**
  * Update alert status by query
@@ -22,17 +22,19 @@ export const DETECTION_ENGINE_SIGNALS_STATUS_URL = '/api/detection_engine/signal
  */
 export const useUpdateAlertsStatus = (): {
   updateAlertStatus: (params: {
-    query: object;
+    index: string;
     status: AlertStatus;
+    ids?: string[];
+    query?: string;
   }) => Promise<UpdateDocumentByQueryResponse>;
 } => {
   const { http } = useKibana().services;
 
   return {
-    updateAlertStatus: ({ query, status }) =>
-      http!.fetch(DETECTION_ENGINE_SIGNALS_STATUS_URL, {
+    updateAlertStatus: ({ index, ids, query, status }) =>
+      http!.fetch(RAC_BULK_UPDATE_STATUS_URL, {
         method: 'POST',
-        body: JSON.stringify({ status, query }),
+        body: JSON.stringify({ index, status, ids, query }),
       }),
   };
 };
