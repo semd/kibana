@@ -103,6 +103,7 @@ export const FieldsPane = React.memo<Props>(
           categoryId={selectedCategoryId}
           data-test-subj="category"
           filteredBrowserFields={filteredBrowserFields}
+          columnHeaders={columnHeaders}
           fieldItems={getFieldItems({
             category: filteredBrowserFields[selectedCategoryId],
             columnHeaders,

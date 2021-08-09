@@ -5,12 +5,14 @@
  * 2.0.
  */
 
-import { EuiInMemoryTable } from '@elastic/eui';
+import { EuiInMemoryTable, EuiTableSelectionType } from '@elastic/eui';
 import { noop } from 'lodash/fp';
-import React, { useCallback, useMemo, useRef } from 'react';
+import React, { useCallback, useMemo, useRef, useState } from 'react';
 import styled from 'styled-components';
+import { useDispatch } from 'react-redux';
 import {
   arrayIndexToAriaIndex,
+  ColumnHeaderOptions,
   DATA_COLINDEX_ATTRIBUTE,
   DATA_ROWINDEX_ATTRIBUTE,
   onKeyDownFocusHandler,
@@ -23,6 +25,7 @@ import type { FieldItem } from './field_items';
 import { CATEGORY_TABLE_CLASS_NAME, TABLE_HEIGHT } from './helpers';
 
 import * as i18n from './translations';
+import { tGridActions } from '../../../../store/t_grid';
 
 const TableContainer = styled.div<{ height: number; width: number }>`
   ${({ height }) => `height: ${height}px`};
@@ -41,6 +44,7 @@ const getAriaRowindex = (fieldItem: FieldItem) =>
 
 interface Props {
   categoryId: string;
+  columnHeaders: ColumnHeaderOptions[];
   fieldItems: FieldItem[];
   filteredBrowserFields: BrowserFields;
   onCategorySelected: (categoryId: string) => void;
@@ -50,7 +54,15 @@ interface Props {
 }
 
 export const Category = React.memo<Props>(
-  ({ categoryId, filteredBrowserFields, fieldItems, onUpdateColumns, timelineId, width }) => {
+  ({
+    categoryId,
+    columnHeaders,
+    filteredBrowserFields,
+    fieldItems,
+    onUpdateColumns,
+    timelineId,
+    width,
+  }) => {
     const containerElement = useRef<HTMLDivElement | null>(null);
     const onKeyDown = useCallback(
       (keyboardEvent: React.KeyboardEvent) => {
@@ -78,6 +90,48 @@ export const Category = React.memo<Props>(
 
     const columns = useMemo(() => getFieldColumns(), []);
 
+    // const dispatch = useDispatch();
+
+    // const toggleColumn = useCallback(
+    //   (column: ColumnHeaderOptions) => {
+    //     console.log({ column });
+    //     if (columnHeaders.some((c) => c.id === column.id)) {
+    //       dispatch(
+    //         tGridActions.removeColumn({
+    //           columnId: column.id,
+    //           id: timelineId,
+    //         })
+    //       );
+    //     } else {
+    //       dispatch(
+    //         tGridActions.upsertColumn({
+    //           column,
+    //           id: timelineId,
+    //           index: 1,
+    //         })
+    //       );
+    //     }
+    //   },
+    //   [columnHeaders, dispatch, timelineId]
+    // );
+
+    const [selection, setSelection] = useState<FieldItem[]>([]);
+
+    const selectionValue: EuiTableSelectionType<FieldItem> = {
+      // selectable: (item) => ,
+      // selectableMessage: () => 'selectable message',
+      onSelectionChange: (items) => {
+        setSelection(items);
+        // toggleColumn({
+        //   columnHeaderType: defaultColumnHeaderType,
+        //   id: item.fieldId ?? '',
+        //   initialWidth: DEFAULT_COLUMN_MIN_WIDTH,
+        //   ...getAlertColumnHeader(timelineId, item.fieldId ?? ''),
+        // });
+      },
+      initialSelected: fieldItemsWithRowindex,
+    };
+
     return (
       <>
         <CategoryTitle
@@ -98,11 +152,14 @@ export const Category = React.memo<Props>(
           <EuiInMemoryTable
             className={`${CATEGORY_TABLE_CLASS_NAME} eui-yScroll`}
             items={fieldItemsWithRowindex}
+            itemId="fieldId"
             columns={columns}
             pagination={false}
             rowProps={getAriaRowindex}
             sorting={false}
             tableCaption={i18n.CATEGORY_FIELDS_TABLE_CAPTION(categoryId)}
+            selection={selectionValue}
+            isSelectable={true}
           />
         </TableContainer>
       </>
