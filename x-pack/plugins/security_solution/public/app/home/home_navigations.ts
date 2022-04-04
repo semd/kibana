@@ -62,13 +62,6 @@ export const navTabs: SecurityNav = {
     disabled: false,
     urlKey: 'alerts',
   },
-  [SecurityPageName.rules]: {
-    id: SecurityPageName.rules,
-    name: i18n.RULES,
-    href: APP_RULES_PATH,
-    disabled: false,
-    urlKey: 'rules',
-  },
   [SecurityPageName.exceptions]: {
     id: SecurityPageName.exceptions,
     name: i18n.EXCEPTIONS,
@@ -76,26 +69,32 @@ export const navTabs: SecurityNav = {
     disabled: false,
     urlKey: 'exceptions',
   },
-  [SecurityPageName.hosts]: {
-    id: SecurityPageName.hosts,
-    name: i18n.HOSTS,
-    href: APP_HOSTS_PATH,
-    disabled: false,
-    urlKey: 'host',
-  },
-  [SecurityPageName.users]: {
-    id: SecurityPageName.users,
-    name: i18n.USERS,
-    href: APP_USERS_PATH,
-    disabled: false,
-    urlKey: 'users',
-  },
-  [SecurityPageName.network]: {
-    id: SecurityPageName.network,
-    name: i18n.NETWORK,
-    href: APP_NETWORK_PATH,
-    disabled: false,
-    urlKey: 'network',
+  [SecurityPageName.explore]: {
+    id: SecurityPageName.explore,
+    name: i18n.EXPLORE,
+    items: [
+      {
+        id: SecurityPageName.hosts,
+        name: i18n.HOSTS,
+        href: APP_HOSTS_PATH,
+        disabled: false,
+        urlKey: 'host',
+      },
+      {
+        id: SecurityPageName.network,
+        name: i18n.NETWORK,
+        href: APP_NETWORK_PATH,
+        disabled: false,
+        urlKey: 'network',
+      },
+      {
+        id: SecurityPageName.users,
+        name: i18n.USERS,
+        href: APP_USERS_PATH,
+        disabled: false,
+        urlKey: 'users',
+      },
+    ],
   },
   [SecurityPageName.timelines]: {
     id: SecurityPageName.timelines,
@@ -111,11 +110,24 @@ export const navTabs: SecurityNav = {
     disabled: false,
     urlKey: 'cases',
   },
+  [SecurityPageName.rules]: {
+    id: SecurityPageName.rules,
+    name: i18n.RULES,
+    href: APP_RULES_PATH,
+    urlKey: 'rules',
+
+    items: [
+      {
+        id: SecurityPageName.rules,
+        name: i18n.RULES,
+        href: APP_RULES_PATH,
+        urlKey: 'rules',
+      },
+    ],
+  },
   [SecurityPageName.administration]: {
     id: SecurityPageName.administration,
     name: i18n.ADMINISTRATION,
-    href: APP_MANAGEMENT_PATH,
-    disabled: false,
     urlKey: 'administration',
   },
   [SecurityPageName.endpoints]: {

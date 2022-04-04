@@ -90,7 +90,7 @@ export const TabNavigationComponent: React.FC<TabNavigationProps> = ({
             id={tab.id}
             hrefWithSearch={tab.href + search}
             name={tab.name}
-            disabled={tab.disabled}
+            disabled={tab.disabled ?? false}
             isSelected={isSelected}
           />
         );

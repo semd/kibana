@@ -34,10 +34,11 @@ export type SecurityNavGroup = Record<SecurityNavGroupKey, NavGroupTab>;
 export interface NavTab {
   id: string;
   name: string;
-  href: string;
-  disabled: boolean;
+  disabled?: boolean;
+  href?: string;
   urlKey?: UrlStateType;
   pageId?: SecurityPageName;
+  items?: NavTab[];
 }
 
 export type SecurityNavKey =

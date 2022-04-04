@@ -26,27 +26,28 @@ export const usePrimaryNavigationItems = ({
 }: PrimaryNavigationItemsProps): Array<EuiSideNavItemType<{}>> => {
   const { navigateTo, getAppUrl } = useNavigation();
   const getSideNav = useCallback(
-    (tab: NavTab) => {
-      const { id, name, disabled } = tab;
+    (navTab: NavTab): EuiSideNavItemType<{}> => {
+      const { id, name, disabled = false, items } = navTab;
       const isSelected = selectedTabId === id;
-      const urlSearch = getSearch(tab, urlStateProps);
-
-      const handleClick = (ev: React.MouseEvent) => {
-        ev.preventDefault();
-        navigateTo({ deepLinkId: id, path: urlSearch });
-      };
-
-      const appHref = getAppUrl({ deepLinkId: id, path: urlSearch });
+      const urlSearch = getSearch(navTab, urlStateProps);
 
       return {
-        'data-href': appHref,
         'data-test-subj': `navigation-${id}`,
         disabled,
-        href: appHref,
         id,
         isSelected,
         name,
-        onClick: handleClick,
+        ...(items != null
+          ? {
+              items: items.map((t: NavTab) => getSideNav(t)),
+            }
+          : {
+              href: getAppUrl({ deepLinkId: id, path: urlSearch }),
+              onClick: (ev: React.MouseEvent) => {
+                ev.preventDefault();
+                navigateTo({ deepLinkId: id, path: urlSearch });
+              },
+            }),
       };
     },
     [getAppUrl, navigateTo, selectedTabId, urlStateProps]
@@ -83,53 +84,53 @@ function usePrimaryNavigationItemsToDisplay(navTabs: Record<string, NavTab>) {
                 ...(navTabs[SecurityPageName.detectionAndResponse] != null
                   ? [navTabs[SecurityPageName.detectionAndResponse]]
                   : []),
-              ],
-            },
-            {
-              ...securityNavGroup[SecurityNavGroupKey.detect],
-              items: [
                 navTabs[SecurityPageName.alerts],
-                navTabs[SecurityPageName.rules],
-                navTabs[SecurityPageName.exceptions],
+                navTabs[SecurityPageName.timelines],
+                ...(hasCasesReadPermissions ? [navTabs[SecurityPageName.case]] : []),
+                navTabs[SecurityPageName.explore],
+                navTabs[SecurityPageName.administration],
               ],
             },
-            {
-              ...securityNavGroup[SecurityNavGroupKey.explore],
-              items: [
-                navTabs[SecurityPageName.hosts],
-                navTabs[SecurityPageName.network],
-                ...(navTabs[SecurityPageName.users] != null
-                  ? [navTabs[SecurityPageName.users]]
-                  : []),
-              ],
-            },
-            {
-              ...securityNavGroup[SecurityNavGroupKey.investigate],
-              items: hasCasesReadPermissions
-                ? [navTabs[SecurityPageName.timelines], navTabs[SecurityPageName.case]]
-                : [navTabs[SecurityPageName.timelines]],
-            },
-            {
-              ...securityNavGroup[SecurityNavGroupKey.manage],
-              items: [
-                navTabs[SecurityPageName.endpoints],
-                ...(isPolicyListEnabled ? [navTabs[SecurityPageName.policies]] : []),
-                navTabs[SecurityPageName.trustedApps],
-                navTabs[SecurityPageName.eventFilters],
-                ...(canSeeHostIsolationExceptions
-                  ? [navTabs[SecurityPageName.hostIsolationExceptions]]
-                  : []),
-                navTabs[SecurityPageName.blocklist],
-              ],
-            },
+            //     {
+            //       ...securityNavGroup[SecurityNavGroupKey.detect],
+            //       items: [
+            //         navTabs[SecurityPageName.alerts],
+            //         navTabs[SecurityPageName.rules],
+            //         navTabs[SecurityPageName.exceptions],
+            //       ],
+            //     },
+            //     {
+            //       ...securityNavGroup[SecurityNavGroupKey.explore],
+            //       items: [
+            //         navTabs[SecurityPageName.hosts],
+            //         navTabs[SecurityPageName.network],
+            //         ...(navTabs[SecurityPageName.users] != null
+            //           ? [navTabs[SecurityPageName.users]]
+            //           : []),
+            //       ],
+            //     },
+            //     {
+            //       ...securityNavGroup[SecurityNavGroupKey.investigate],
+            //       items: hasCasesReadPermissions
+            //         ? [navTabs[SecurityPageName.timelines], navTabs[SecurityPageName.case]]
+            //         : [navTabs[SecurityPageName.timelines]],
+            //     },
+            //     {
+            //       ...securityNavGroup[SecurityNavGroupKey.manage],
+            //       items: [
+            //         navTabs[SecurityPageName.endpoints],
+            //         ...(isPolicyListEnabled ? [navTabs[SecurityPageName.policies]] : []),
+            //         navTabs[SecurityPageName.trustedApps],
+            //         navTabs[SecurityPageName.eventFilters],
+            //         ...(canSeeHostIsolationExceptions
+            //           ? [navTabs[SecurityPageName.hostIsolationExceptions]]
+            //           : []),
+            //         navTabs[SecurityPageName.blocklist],
+            //       ],
+            //     },
           ]
         : hasCasesReadPermissions
-        ? [
-            {
-              ...securityNavGroup[SecurityNavGroupKey.investigate],
-              items: [navTabs[SecurityPageName.case]],
-            },
-          ]
+        ? [navTabs[SecurityPageName.case]]
         : [],
     [
       uiCapabilities.siem.show,
