@@ -5,7 +5,7 @@
  * 2.0.
  */
 import {
-  EuiButton,
+  EuiLink,
   EuiFlexGroup,
   EuiFlexItem,
   EuiHorizontalRule,
@@ -37,11 +37,9 @@ const Header: React.FC<{ canCreateDashboard: boolean }> = ({ canCreateDashboard 
       </EuiFlexItem>
       {canCreateDashboard && (
         <EuiFlexItem grow={false}>
-          <EuiButton
-            isDisabled={isLoading}
+          <EuiLink
+            disabled={isLoading}
             color="primary"
-            fill
-            iconType="plusInCircle"
             href={url}
             onClick={(ev) => {
               ev.preventDefault();
@@ -50,7 +48,7 @@ const Header: React.FC<{ canCreateDashboard: boolean }> = ({ canCreateDashboard 
             data-test-subj="createDashboardButton"
           >
             {i18n.DASHBOARDS_PAGE_CREATE_BUTTON}
-          </EuiButton>
+          </EuiLink>
         </EuiFlexItem>
       )}
     </EuiFlexGroup>
