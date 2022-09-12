@@ -18,6 +18,7 @@ import { getActionType as getSlackActionType } from './slack';
 import { getActionType as getWebhookActionType } from './webhook';
 import { getActionType as getCasesWebhookActionType } from './cases_webhook';
 import { getActionType as getXmattersActionType } from './xmatters';
+import { getActionType as getTinesActionType } from './tines';
 import {
   getServiceNowITSMActionType,
   getServiceNowSIRActionType,
@@ -54,6 +55,8 @@ export type { ActionParamsType as ResilientActionParams } from './resilient';
 export { ActionTypeId as ResilientActionTypeId } from './resilient';
 export type { ActionParamsType as TeamsActionParams } from './teams';
 export { ActionTypeId as TeamsActionTypeId } from './teams';
+export type { ActionParamsType as TinesActionParams } from './tines';
+export { ActionTypeId as TinesActionTypeId } from './tines';
 
 export function registerBuiltInActionTypes({
   actionsConfigUtils: configurationUtilities,
@@ -83,4 +86,5 @@ export function registerBuiltInActionTypes({
   actionTypeRegistry.register(getJiraActionType({ logger, configurationUtilities }));
   actionTypeRegistry.register(getResilientActionType({ logger, configurationUtilities }));
   actionTypeRegistry.register(getTeamsActionType({ logger, configurationUtilities }));
+  actionTypeRegistry.register(getTinesActionType({ logger, configurationUtilities }));
 }

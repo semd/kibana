@@ -57,32 +57,23 @@ export function getActionType({
 }
 
 function validateActionTypeConfig(
-  { webhookUrl, path }: ActionTypeConfigType,
+  { url }: ActionTypeConfigType,
   validatorServices: ValidatorServices
 ) {
   const { configurationUtilities } = validatorServices;
 
-  if (webhookUrl == null) {
+  if (url == null) {
     return i18n.translate('xpack.actions.builtin.tines.missingWebhookUrl', {
       defaultMessage: 'Provide valid config url',
     });
   }
-  if (path == null) {
-    return i18n.translate('xpack.actions.builtin.tines.missingPath', {
-      defaultMessage: 'Provide valid config path',
-    });
-  }
-
-  const apiBaseUrl = getApiUrl({ webhookUrl, path });
 
   try {
-    if (apiBaseUrl) {
-      new URL(apiBaseUrl);
-    }
+    new URL(url);
   } catch (err) {
     throw new Error(
       i18n.translate('xpack.actions.builtin.tines.tinesConfigurationErrorNoHostname', {
-        defaultMessage: 'Error configuring Tines action: unable to parse api base url: {err}',
+        defaultMessage: 'Error configuring Tines action: unable to parse webhook url: {err}',
         values: {
           err,
         },
@@ -91,9 +82,7 @@ function validateActionTypeConfig(
   }
 
   try {
-    if (apiBaseUrl) {
-      configurationUtilities.ensureUriAllowed(apiBaseUrl);
-    }
+    configurationUtilities.ensureUriAllowed(url);
   } catch (allowListError) {
     throw new Error(
       i18n.translate('xpack.actions.builtin.tines.tinesConfigurationError', {
@@ -110,52 +99,52 @@ function validateConnector(
   config: ActionTypeConfigType,
   secrets: ActionTypeSecretsType
 ): string | null {
-  const { secretKey } = secrets;
-  const { webhookUrl, path } = config;
+  // const { secretKey } = secrets;
+  // const { webhookUrl, path } = config;
 
-  if (webhookUrl == null) {
-    return i18n.translate('xpack.actions.builtin.tines.missingWebhookUrl', {
-      defaultMessage: 'Provide valid config url',
-    });
-  }
-  if (path == null) {
-    return i18n.translate('xpack.actions.builtin.tines.missingPath', {
-      defaultMessage: 'Provide valid config path',
-    });
-  }
-  if (secretKey == null) {
-    return i18n.translate('xpack.actions.builtin.tines.missingSecretKey', {
-      defaultMessage: 'Provide valid secret key',
-    });
-  }
+  // if (webhookUrl == null) {
+  //   return i18n.translate('xpack.actions.builtin.tines.missingWebhookUrl', {
+  //     defaultMessage: 'Provide valid config url',
+  //   });
+  // }
+  // if (path == null) {
+  //   return i18n.translate('xpack.actions.builtin.tines.missingPath', {
+  //     defaultMessage: 'Provide valid config path',
+  //   });
+  // }
+  // if (secretKey == null) {
+  //   return i18n.translate('xpack.actions.builtin.tines.missingSecretKey', {
+  //     defaultMessage: 'Provide valid secret key',
+  //   });
+  // }
 
-  const apiUrl = getApiUrl({ webhookUrl, path, secretKey });
+  // const apiUrl = getApiUrl({ webhookUrl, path, secretKey });
 
-  try {
-    if (apiUrl) {
-      new URL(apiUrl);
-    }
-  } catch (err) {
-    throw new Error(
-      i18n.translate('xpack.actions.builtin.tines.tinesConfigurationErrorNoHostname', {
-        defaultMessage: 'Error configuring Tines action: unable to parse api url: {err}',
-        values: {
-          err,
-        },
-      })
-    );
-  }
+  // try {
+  //   if (apiUrl) {
+  //     new URL(apiUrl);
+  //   }
+  // } catch (err) {
+  //   throw new Error(
+  //     i18n.translate('xpack.actions.builtin.tines.tinesConfigurationErrorNoHostname', {
+  //       defaultMessage: 'Error configuring Tines action: unable to parse api url: {err}',
+  //       values: {
+  //         err,
+  //       },
+  //     })
+  //   );
+  // }
   return null;
 }
 
 function validateActionTypeSecrets(secretsObject: ActionTypeSecretsType) {
-  if (!secretsObject.secretKey) {
-    throw new Error(
-      i18n.translate('xpack.actions.builtin.tines.noSecretKeyProvided', {
-        defaultMessage: 'Provide valid secret key to authenticate',
-      })
-    );
-  }
+  // if (!secretsObject.secretKey) {
+  //   throw new Error(
+  //     i18n.translate('xpack.actions.builtin.tines.noSecretKeyProvided', {
+  //       defaultMessage: 'Provide valid secret key to authenticate',
+  //     })
+  //   );
+  // }
 }
 
 // action executor
@@ -167,11 +156,11 @@ export async function executor(
   execOptions: TinesActionTypeExecutorOptions
 ): Promise<ActionTypeExecutorResult<unknown>> {
   const actionId = execOptions.actionId;
-  const { webhookUrl, path } = execOptions.config;
-  const { secretKey }: ActionTypeSecretsType = execOptions.secrets;
+  const { url } = execOptions.config;
+  // const { secretKey }: ActionTypeSecretsType = execOptions.secrets;
 
   const data = getPayloadForRequest(execOptions.params);
-  const url = getApiUrl({ webhookUrl, path, secretKey });
+  // const url = getApiUrl({ webhookUrl, path, secretKey });
 
   let result;
   try {
@@ -248,13 +237,13 @@ function getPayloadForRequest(params: ActionParamsType): TinesPayload {
   return data;
 }
 
-function getApiUrl({
-  webhookUrl,
-  path,
-  secretKey,
-}: ActionTypeConfigType & Partial<ActionTypeSecretsType>) {
-  if (!webhookUrl || !path) {
-    return null;
-  }
-  return `${webhookUrl}/${path}${secretKey && `/${secretKey}`}`;
-}
+// function getApiUrl({
+//   webhookUrl,
+//   path,
+//   secretKey,
+// }: ActionTypeConfigType & Partial<ActionTypeSecretsType>) {
+//   if (!webhookUrl || !path) {
+//     return null;
+//   }
+//   return `${webhookUrl}/${path}${secretKey && `/${secretKey}`}`;
+// }

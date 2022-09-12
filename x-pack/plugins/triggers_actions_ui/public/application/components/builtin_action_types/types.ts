@@ -177,4 +177,18 @@ export interface TeamsSecrets {
 
 export type TeamsActionConnector = UserConfiguredActionConnector<unknown, TeamsSecrets>;
 
+export interface TinesConfig {
+  webhookEndpoint: string;
+  path: string;
+}
+
+export interface TinesSecrets {
+  secretKey: string;
+}
+
+export interface TinesActionParams {
+  dedupKey?: string;
+  body?: string;
+}
+
 export type LogoProps = Omit<EuiIconProps, 'type'>;

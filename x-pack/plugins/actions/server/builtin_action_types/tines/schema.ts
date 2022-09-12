@@ -8,14 +8,11 @@ import { schema } from '@kbn/config-schema';
 
 // configuration definition
 export const ConfigSchema = schema.object({
-  webhookUrl: schema.nullable(schema.string()),
-  path: schema.nullable(schema.string()),
+  url: schema.nullable(schema.string()),
 });
 
 // secrets definition
-export const SecretsSchema = schema.object({
-  secretKey: schema.nullable(schema.string()),
-});
+export const SecretsSchema = schema.object({});
 
 // params definition
 export const ParamsSchema = schema.object({

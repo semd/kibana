@@ -5,5 +5,4 @@
  * 2.0.
  */
 
-export { getActionType, ActionTypeId } from './tines';
-export type { ActionTypeConfigType, ActionTypeSecretsType, ActionParamsType } from './types';
+export { getActionType as getTinesActionType } from './tines';
