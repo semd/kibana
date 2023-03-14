@@ -32,6 +32,7 @@ import type { IStorageWrapper } from '@kbn/kibana-utils-plugin/public';
 import { type TypedLensByValueInput, LensPublicStart } from '@kbn/lens-plugin/public';
 import type { ChartsPluginStart } from '@kbn/charts-plugin/public';
 import { CasesUiStart } from '@kbn/cases-plugin/public';
+import type { UiActionsStart } from '@kbn/ui-actions-plugin/public';
 import type { UnwrapPromise } from '../common/utility_types';
 import type {
   SourceProviderProps,
@@ -82,6 +83,7 @@ export interface InfraClientStartDeps {
   spaces: SpacesPluginStart;
   storage: IStorageWrapper;
   triggersActionsUi: TriggersAndActionsUIPublicPluginStart;
+  uiActions: UiActionsStart;
   unifiedSearch: UnifiedSearchPublicPluginStart;
   usageCollection: UsageCollectionStart;
   telemetry: ITelemetryClient;

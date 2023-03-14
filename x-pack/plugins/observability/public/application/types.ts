@@ -26,6 +26,7 @@ import { SharePluginStart } from '@kbn/share-plugin/public';
 import { TriggersAndActionsUIPublicPluginStart } from '@kbn/triggers-actions-ui-plugin/public';
 import { CasesUiStart } from '@kbn/cases-plugin/public';
 import type { ChartsPluginStart } from '@kbn/charts-plugin/public';
+import { UiActionsStart } from '@kbn/ui-actions-plugin/public';
 
 export interface ObservabilityAppServices {
   application: ApplicationStart;
@@ -46,6 +47,7 @@ export interface ObservabilityAppServices {
   storage: IStorageWrapper;
   theme: ThemeServiceStart;
   triggersActionsUi: TriggersAndActionsUIPublicPluginStart;
+  uiActions: UiActionsStart;
   uiSettings: IUiSettingsClient;
   isDev?: boolean;
   kibanaVersion: string;

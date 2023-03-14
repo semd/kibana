@@ -10,6 +10,8 @@ import { EuiBasicTableColumn, EuiText } from '@elastic/eui';
 import { i18n } from '@kbn/i18n';
 import { TimeRange } from '@kbn/es-query';
 
+import { CellActions, CellActionsMode } from '@kbn/cell-actions';
+import { OBSERVABILITY_CELL_ACTIONS_TRIGGER } from '@kbn/observability-plugin/public';
 import { useKibanaContextForPlugin } from '../../../../hooks/use_kibana';
 import { createInventoryMetricFormatter } from '../../inventory_view/lib/create_inventory_metric_formatter';
 import { HostsTableEntryTitle } from '../components/hosts_table_entry_title';
@@ -135,18 +137,40 @@ export const useHostsTable = (nodes: SnapshotNode[], { time }: HostTableParams) 
         sortable: true,
         truncateText: true,
         render: (title: HostNodeRow['title']) => (
-          <HostsTableEntryTitle
-            title={title}
-            time={time}
-            onClick={() => reportHostEntryClick(title)}
-          />
+          <CellActions
+            field={{
+              name: 'host.name',
+              value: title.name,
+              type: 'keyword',
+            }}
+            triggerId={OBSERVABILITY_CELL_ACTIONS_TRIGGER}
+            mode={CellActionsMode.HOVER}
+          >
+            <HostsTableEntryTitle
+              title={title}
+              time={time}
+              onClick={() => reportHostEntryClick(title)}
+            />
+          </CellActions>
         ),
       },
       {
         name: osLabel,
         field: 'os',
         sortable: true,
-        render: (os: string) => <EuiText size="s">{os}</EuiText>,
+        render: (os: string) => (
+          <CellActions
+            field={{
+              name: 'host.os.name',
+              value: os,
+              type: 'keyword',
+            }}
+            triggerId={OBSERVABILITY_CELL_ACTIONS_TRIGGER}
+            mode={CellActionsMode.HOVER}
+          >
+            <EuiText size="s">{os}</EuiText>
+          </CellActions>
+        ),
       },
       {
         name: averageCpuUsageLabel,

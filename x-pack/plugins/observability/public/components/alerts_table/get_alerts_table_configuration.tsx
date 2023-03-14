@@ -25,6 +25,7 @@ import { useGetAlertFlyoutComponents } from '../use_get_alert_flyout_components'
 import type { ObservabilityRuleTypeRegistry } from '../../rules/create_observability_rule_type_registry';
 import type { ConfigSchema } from '../../plugin';
 import type { TopAlert } from '../../typings/alerts';
+import { useAlertsCellActions } from '../../hooks/use_alert_cell_actions';
 
 export const getAlertsTableConfiguration = (
   observabilityRuleTypeRegistry: ObservabilityRuleTypeRegistry,
@@ -66,4 +67,5 @@ export const getAlertsTableConfiguration = (
     const { header, body, footer } = useGetAlertFlyoutComponents(observabilityRuleTypeRegistry);
     return { header, body, footer };
   },
+  useCellActions: useAlertsCellActions,
 });

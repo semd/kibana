@@ -26,6 +26,7 @@
       "security",
       "guidedOnboarding",
       "share",
+      "uiActions",
     ],
     "optionalPlugins": [
       "discover",

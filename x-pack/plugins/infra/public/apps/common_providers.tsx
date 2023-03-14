@@ -16,6 +16,7 @@ import {
 import { Storage } from '@kbn/kibana-utils-plugin/public';
 import { NavigationWarningPromptProvider } from '@kbn/observability-plugin/public';
 import { TriggersAndActionsUIPublicPluginStart } from '@kbn/triggers-actions-ui-plugin/public';
+import { CellActionsProvider } from '@kbn/cell-actions';
 import { useKibanaContextForPluginProvider } from '../hooks/use_kibana';
 import { InfraClientStartDeps, InfraClientStartExports } from '../types';
 import { HeaderActionMenuProvider } from '../utils/header_action_menu_provider';
@@ -64,11 +65,15 @@ export const CoreProviders: React.FC<CoreProvidersProps> = ({
   );
 
   return (
-    <KibanaContextProviderForPlugin services={{ ...core, ...plugins, ...pluginStart }}>
-      <core.i18n.Context>
-        <KibanaThemeProvider theme$={theme$}>{children}</KibanaThemeProvider>
-      </core.i18n.Context>
-    </KibanaContextProviderForPlugin>
+    <CellActionsProvider
+      getTriggerCompatibleActions={plugins.uiActions.getTriggerCompatibleActions}
+    >
+      <KibanaContextProviderForPlugin services={{ ...core, ...plugins, ...pluginStart }}>
+        <core.i18n.Context>
+          <KibanaThemeProvider theme$={theme$}>{children}</KibanaThemeProvider>
+        </core.i18n.Context>
+      </KibanaContextProviderForPlugin>
+    </CellActionsProvider>
   );
 };
 
