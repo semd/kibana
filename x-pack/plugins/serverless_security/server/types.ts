@@ -6,14 +6,16 @@
  */
 
 import type { SecurityPluginSetup, SecurityPluginStart } from '@kbn/security-plugin/server';
+import type { AppFeatureKeys } from '@kbn/security-solution-features/common';
 import type { PluginSetupContract, PluginStartContract } from '@kbn/features-plugin/server';
 import {
   PluginSetup as SecuritySolutionPluginSetup,
   PluginStart as SecuritySolutionPluginStart,
 } from '@kbn/security-solution-plugin/server';
 
-// eslint-disable-next-line @typescript-eslint/no-empty-interface
-export interface ServerlessSecurityPluginSetup {}
+export interface ServerlessSecurityPluginSetup {
+  skuFeatures: AppFeatureKeys;
+}
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface ServerlessSecurityPluginStart {}
 

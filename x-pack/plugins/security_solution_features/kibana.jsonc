@@ -1,0 +1,15 @@
+{
+  "type": "plugin",
+  "id": "@kbn/security-solution-features",
+  "owner": "@elastic/security-solution",
+  "description": "Security Solution features management.",
+  "plugin": {
+    "id": "securitySolutionFeatures",
+    "server": true,
+    "browser": false,
+    "configPath": ["xpack", "securitySolutionFeatures"],
+    "requiredPlugins": ["cases", "features"],
+    "optionalPlugins": ["serverless"],
+    "requiredBundles": []
+  }
+}

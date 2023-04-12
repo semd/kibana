@@ -32,9 +32,10 @@ export class ServerlessSecurityPlugin
   }
 
   public setup(_coreSetup: CoreSetup, pluginsSetup: ServerlessSecurityPluginSetupDependencies) {
-    pluginsSetup.securitySolution.setAppFeatures(getProjectSkusFeatures(this.config.projectSkus));
+    const skuFeatures = getProjectSkusFeatures(this.config.projectSkus);
+    // pluginsSetup.securitySolution.setAppFeatures(skuFeatures);
 
-    return {};
+    return { skuFeatures };
   }
 
   public start() {

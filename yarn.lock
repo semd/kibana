@@ -4837,6 +4837,10 @@
   version "0.0.0"
   uid ""
 
+"@kbn/security-solution-features@link:x-pack/plugins/security_solution_features":
+  version "0.0.0"
+  uid ""
+
 "@kbn/security-solution-fixtures-plugin@link:x-pack/test/cases_api_integration/common/plugins/security_solution":
   version "0.0.0"
   uid ""
@@ -4937,11 +4941,11 @@
   version "0.0.0"
   uid ""
 
-"@kbn/serverless-security@link:x-pack/plugins/serverless_security":
+"@kbn/serverless-search@link:x-pack/plugins/serverless_search":
   version "0.0.0"
   uid ""
 
-"@kbn/serverless-search@link:x-pack/plugins/serverless_search":
+"@kbn/serverless-security@link:x-pack/plugins/serverless_security":
   version "0.0.0"
   uid ""
 
