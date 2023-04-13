@@ -6,7 +6,6 @@
  */
 
 import { PluginInitializerContext, Plugin, CoreSetup } from '@kbn/core/server';
-import { ExperimentalFeatures } from '@kbn/security-solution-plugin/common';
 import { AppFeatures } from './lib';
 
 import {
@@ -35,11 +34,15 @@ export class SecuritySolutionFeaturesPlugin
     _coreSetup: CoreSetup,
     pluginsSetup: SecuritySolutionFeaturesPluginSetupDependencies
   ) {
-    return {
-      registerKibanaFeatures: (experimentalFeatures: ExperimentalFeatures) => {
-        const appFeatures = new AppFeatures(experimentalFeatures);
-      },
-    };
+    const { features, securitySolution, serverlessSecurity } = pluginsSetup;
+    const appFeatures = new AppFeatures(features, securitySolution.experimentalFeatures);
+    if (pluginsSetup.serverlessSecurity?.skuFeatures) {
+      appFeatures.setFeatures(pluginsSetup.serverlessSecurity.skuFeatures);
+    }
+    console.log('register features!!');
+    appFeatures.registerKibanaFeatures();
+
+    return {};
   }
 
   public start() {

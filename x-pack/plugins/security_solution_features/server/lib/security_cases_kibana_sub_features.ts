@@ -12,7 +12,7 @@ import {
   createUICapabilities as createCasesUICapabilities,
   getApiTags as getCasesApiTags,
 } from '@kbn/cases-plugin/common';
-import { APP_ID } from '../../../common/constants';
+import { APP_ID } from '@kbn/security-solution-plugin/common';
 
 const casesCapabilities = createCasesUICapabilities();
 const casesApiTags = getCasesApiTags(APP_ID);

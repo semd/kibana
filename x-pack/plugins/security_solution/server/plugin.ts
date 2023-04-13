@@ -90,7 +90,6 @@ import { setIsElasticCloudDeployment } from './lib/telemetry/helpers';
 import { artifactService } from './lib/telemetry/artifact';
 import { endpointFieldsProvider } from './search_strategy/endpoint_fields';
 import { ENDPOINT_FIELDS_SEARCH_STRATEGY } from '../common/endpoint/constants';
-import { AppFeatures } from './lib/app_features';
 
 export type { SetupPlugins, StartPlugins, PluginSetup, PluginStart } from './plugin_contract';
 
@@ -99,7 +98,6 @@ export class Plugin implements ISecuritySolutionPlugin {
   private readonly config: ConfigType;
   private readonly logger: Logger;
   private readonly appClientFactory: AppClientFactory;
-  private readonly appFeatures: AppFeatures;
 
   private readonly endpointAppContextService = new EndpointAppContextService();
   private readonly telemetryReceiver: ITelemetryReceiver;
@@ -120,7 +118,6 @@ export class Plugin implements ISecuritySolutionPlugin {
     this.config = createConfig(context);
     this.logger = context.logger.get();
     this.appClientFactory = new AppClientFactory();
-    this.appFeatures = new AppFeatures(this.config.experimentalFeatures);
 
     // Cache up to three artifacts with a max retention of 5 mins each
     this.artifactsCache = new LRU<string, Buffer>({ max: 3, maxAge: 1000 * 60 * 5 });
@@ -136,13 +133,12 @@ export class Plugin implements ISecuritySolutionPlugin {
   ): SecuritySolutionPluginSetup {
     this.logger.debug('plugin setup');
 
-    const { appClientFactory, appFeatures, pluginContext, config, logger } = this;
+    const { appClientFactory, pluginContext, config, logger } = this;
     const experimentalFeatures = config.experimentalFeatures;
     this.kibanaIndex = core.savedObjects.getKibanaIndex();
 
     initSavedObjects(core.savedObjects);
     initUiSettings(core.uiSettings, experimentalFeatures);
-    appFeatures.init(plugins.features);
 
     const ruleExecutionLogService = createRuleExecutionLogService(config, logger, core, plugins);
     ruleExecutionLogService.registerEventLogProvider();
@@ -370,7 +366,7 @@ export class Plugin implements ISecuritySolutionPlugin {
     plugins.guidedOnboarding.registerGuideConfig(siemGuideId, siemGuideConfig);
 
     return {
-      setAppFeatures: this.appFeatures.set.bind(this.appFeatures),
+      experimentalFeatures,
     };
   }
 

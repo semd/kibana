@@ -10,20 +10,24 @@ import type {
   ServerlessSecurityPluginSetup,
   ServerlessSecurityPluginStart,
 } from '@kbn/serverless-security/server';
-import type { ExperimentalFeatures } from '@kbn/security-solution-plugin/common';
+import {
+  PluginSetup as SecuritySolutionPluginSetup,
+  PluginStart as SecuritySolutionPluginStart,
+} from '@kbn/security-solution-plugin/server';
 
-export interface SecuritySolutionFeaturesPluginSetup {
-  registerKibanaFeatures: (experimentalFeatures: ExperimentalFeatures) => void;
-}
+// eslint-disable-next-line @typescript-eslint/no-empty-interface
+export interface SecuritySolutionFeaturesPluginSetup {}
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface SecuritySolutionFeaturesPluginStart {}
 
 export interface SecuritySolutionFeaturesPluginSetupDependencies {
-  serverless: ServerlessSecurityPluginSetup;
   features: PluginSetupContract;
+  securitySolution: SecuritySolutionPluginSetup;
+  serverlessSecurity?: ServerlessSecurityPluginSetup;
 }
 
 export interface SecuritySolutionFeaturesPluginStartDependencies {
-  security: ServerlessSecurityPluginStart;
   features: PluginStartContract;
+  securitySolution: SecuritySolutionPluginStart;
+  serverlessSecurity?: ServerlessSecurityPluginStart;
 }

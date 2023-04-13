@@ -5,7 +5,7 @@
  * 2.0.
  */
 
-import type { AppFeatureKey, AppFeatureKeys } from '@kbn/security-solution-plugin/common';
+import type { AppFeatureKey, AppFeatureKeys } from '@kbn/security-solution-features/common';
 import { ServerlessSecuritySku } from '../config';
 import { SKU_APP_FEATURES } from './sku_config';
 

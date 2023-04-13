@@ -11,10 +11,7 @@
  * 2.0.
  */
 
-import type {
-  KibanaFeatureConfig,
-  PluginSetupContract as FeaturesPluginSetup,
-} from '@kbn/features-plugin/server';
+import type { PluginSetupContract as FeaturesPluginSetup } from '@kbn/features-plugin/server';
 import type { ExperimentalFeatures } from '@kbn/security-solution-plugin/common';
 import type { AppFeatureKey, AppFeatureKeys } from '../../common/types';
 import type { AppFeatureKibanaConfig, AppFeaturesConfig } from './types';
@@ -31,11 +28,12 @@ import { getMergedAppFeatureConfigs } from './app_features_config_merger';
 type AppFeaturesMap = Map<AppFeatureKey, boolean>;
 
 export class AppFeatures {
-  private experimentalFeatures: ExperimentalFeatures;
   private appFeatures: AppFeaturesMap;
-  private featuresSetup?: FeaturesPluginSetup;
+  private experimentalFeatures: ExperimentalFeatures;
+  private featuresSetup: FeaturesPluginSetup;
 
-  constructor(experimentalFeatures: ExperimentalFeatures) {
+  constructor(featuresSetup: FeaturesPluginSetup, experimentalFeatures: ExperimentalFeatures) {
+    this.featuresSetup = featuresSetup;
     this.experimentalFeatures = experimentalFeatures;
     // Set all feature keys to true by default
     this.appFeatures = new Map(
@@ -46,27 +44,21 @@ export class AppFeatures {
     );
   }
 
-  public init(featuresSetup: FeaturesPluginSetup) {
-    this.featuresSetup = featuresSetup;
-    this.registerEnabledKibanaFeatures();
-  }
-
-  public set(appFeatureKeys: AppFeatureKeys) {
+  public setFeatures(appFeatureKeys: AppFeatureKeys) {
     this.appFeatures = new Map(Object.entries(appFeatureKeys) as Array<[AppFeatureKey, boolean]>);
-    this.registerEnabledKibanaFeatures();
   }
 
   public isEnabled(appFeatureKey: AppFeatureKey): boolean {
     return this.appFeatures.get(appFeatureKey) ?? false;
   }
 
-  private registerEnabledKibanaFeatures() {
+  public registerKibanaFeatures() {
     // register main security Kibana features
     const securityBaseKibanaFeature = getSecurityBaseKibanaFeature(this.experimentalFeatures);
     const enabledSecurityAppFeaturesConfigs = this.getEnabledAppFeaturesConfigs(
       getSecurityAppFeaturesConfig(this.experimentalFeatures)
     );
-    this.registerKibanaFeatures(
+    this.featuresSetup.registerKibanaFeature(
       getMergedAppFeatureConfigs(securityBaseKibanaFeature, enabledSecurityAppFeaturesConfigs)
     );
 
@@ -75,7 +67,7 @@ export class AppFeatures {
     const enabledCasesAppFeaturesConfigs = this.getEnabledAppFeaturesConfigs(
       getCasesAppFeaturesConfig()
     );
-    this.registerKibanaFeatures(
+    this.featuresSetup.registerKibanaFeature(
       getMergedAppFeatureConfigs(securityCasesBaseKibanaFeature, enabledCasesAppFeaturesConfigs)
     );
   }
@@ -92,15 +84,5 @@ export class AppFeatures {
       },
       []
     );
-  }
-
-  private registerKibanaFeatures(kibanaFeatureConfig: KibanaFeatureConfig) {
-    if (this.featuresSetup == null) {
-      throw new Error(
-        'Cannot sync kibana features as featuresSetup is not present. Did you call init?'
-      );
-    }
-    this.featuresSetup.unregisterKibanaFeature(kibanaFeatureConfig.id);
-    this.featuresSetup.registerKibanaFeature(kibanaFeatureConfig);
   }
 }

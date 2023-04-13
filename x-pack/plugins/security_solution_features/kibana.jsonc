@@ -8,8 +8,8 @@
     "server": true,
     "browser": false,
     "configPath": ["xpack", "securitySolutionFeatures"],
-    "requiredPlugins": ["cases", "features"],
-    "optionalPlugins": ["serverless"],
+    "requiredPlugins": ["securitySolution", "cases", "features"],
+    "optionalPlugins": ["serverlessSecurity"],
     "requiredBundles": []
   }
 }
