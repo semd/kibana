@@ -16,7 +16,11 @@ import type {
   AppSubFeaturesMap,
   BaseKibanaFeatureConfig,
 } from '@kbn/security-solution-features';
+import { set } from '@kbn/safer-lodash-set';
 import { ProductFeaturesConfigMerger } from './product_features_config_merger';
+import type { ConfigType } from '../../config';
+
+export type Overrides = ConfigType['productFeatures']['overrides'];
 
 export class ProductFeatures<T extends string = string, S extends string = string> {
   private featureConfigMerger: ProductFeaturesConfigMerger;
@@ -25,6 +29,7 @@ export class ProductFeatures<T extends string = string, S extends string = strin
 
   constructor(
     private readonly logger: Logger,
+    private readonly overrides: Overrides,
     subFeaturesMap: AppSubFeaturesMap<S>,
     private readonly baseKibanaFeature: BaseKibanaFeatureConfig,
     private readonly baseKibanaSubFeatureIds: T[]
@@ -45,7 +50,7 @@ export class ProductFeatures<T extends string = string, S extends string = strin
     }
 
     const completeProductFeatureConfig = this.featureConfigMerger.mergeProductFeatureConfigs(
-      this.baseKibanaFeature,
+      this.getBaseKibanaFeature(),
       this.baseKibanaSubFeatureIds,
       Array.from(productFeatureConfig.values())
     );
@@ -88,5 +93,29 @@ export class ProductFeatures<T extends string = string, S extends string = strin
 
   public isActionRegistered(action: string) {
     return this.registeredActions.has(action);
+  }
+
+  /**
+   * Returns the base Kibana feature with overrides applied.
+   * If no overrides are defined, it returns the base Kibana feature as is.
+   * If overrides are defined, it applies them using lodash set to the base feature.
+   * This allows for dynamic configuration of the base Kibana feature without modifying the original object.
+   * @returns BaseKibanaFeatureConfig
+   */
+  private getBaseKibanaFeature(): BaseKibanaFeatureConfig {
+    const baseKibanaFeature = this.baseKibanaFeature;
+    const baseKibanaFeatureOverrides =
+      this.overrides[baseKibanaFeature.id]?.baseKibanaFeature ?? [];
+
+    for (const override of baseKibanaFeatureOverrides) {
+      const { path, value } = override;
+      set(baseKibanaFeature, path, value);
+    }
+
+    if (baseKibanaFeature.id === 'siem') {
+      console.log(baseKibanaFeature.privileges.all.replacedBy.minimal);
+    }
+
+    return baseKibanaFeature;
   }
 }

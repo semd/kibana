@@ -18,7 +18,6 @@ export interface SecurityFeatureParams {
    */
   experimentalFeatures: Record<string, boolean>;
   savedObjects: string[];
-  isServerless: boolean;
 }
 
 // Omit<> not generic security app features here

@@ -171,12 +171,7 @@ export class Plugin implements ISecuritySolutionPlugin {
     this.logger = context.logger.get();
     this.appClientFactory = new AppClientFactory();
 
-    const isServerless = this.pluginContext.env.packageInfo.buildFlavor === 'serverless';
-    this.productFeaturesService = new ProductFeaturesService(
-      this.logger,
-      this.config.experimentalFeatures,
-      isServerless
-    );
+    this.productFeaturesService = new ProductFeaturesService(this.logger, this.config);
     this.siemMigrationsService = new SiemMigrationsService(
       this.config,
       this.pluginContext.logger,
@@ -218,7 +213,7 @@ export class Plugin implements ISecuritySolutionPlugin {
     initSavedObjects(core.savedObjects);
 
     initUiSettings(core.uiSettings, experimentalFeatures, config.enableUiSettingsValidations);
-    productFeaturesService.init(plugins.features);
+    productFeaturesService.setup(plugins.features);
 
     events.forEach((eventConfig) => {
       core.analytics.registerEventType(eventConfig);

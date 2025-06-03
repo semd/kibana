@@ -26,8 +26,6 @@ import {
   CLOUD_POSTURE_APP_ID,
   SERVER_APP_ID,
   SECURITY_FEATURE_ID_V3,
-  TIMELINE_FEATURE_ID,
-  NOTES_FEATURE_ID,
 } from '../../constants';
 import type { SecurityFeatureParams } from '../types';
 import type { BaseKibanaFeatureConfig } from '../../types';
@@ -51,7 +49,6 @@ const alertingFeatures = SECURITY_RULE_TYPES.map((ruleTypeId) => ({
 
 export const getSecurityV2BaseKibanaFeature = ({
   savedObjects,
-  isServerless,
 }: SecurityFeatureParams): BaseKibanaFeatureConfig => ({
   deprecated: {
     notice: i18n.translate(
@@ -65,7 +62,6 @@ export const getSecurityV2BaseKibanaFeature = ({
       }
     ),
   },
-
   id: SECURITY_FEATURE_ID_V2,
   name: i18n.translate(
     'securitySolutionPackages.features.featureRegistry.linkSecuritySolutionTitle',
@@ -92,17 +88,11 @@ export const getSecurityV2BaseKibanaFeature = ({
   privileges: {
     all: {
       replacedBy: {
-        default: [
-          { feature: TIMELINE_FEATURE_ID, privileges: ['all'] },
-          { feature: NOTES_FEATURE_ID, privileges: ['all'] },
-          { feature: SECURITY_FEATURE_ID_V3, privileges: ['all'] },
-        ],
+        default: [{ feature: SECURITY_FEATURE_ID_V3, privileges: ['all'] }],
         minimal: [
-          { feature: TIMELINE_FEATURE_ID, privileges: ['all'] },
-          { feature: NOTES_FEATURE_ID, privileges: ['all'] },
           {
             feature: SECURITY_FEATURE_ID_V3,
-            privileges: ['minimal_all', ...(isServerless ? [] : ['endpoint_exceptions_all'])],
+            privileges: ['minimal_all', 'endpoint_exceptions_all'],
           },
         ],
       },
@@ -124,17 +114,11 @@ export const getSecurityV2BaseKibanaFeature = ({
     },
     read: {
       replacedBy: {
-        default: [
-          { feature: TIMELINE_FEATURE_ID, privileges: ['read'] },
-          { feature: NOTES_FEATURE_ID, privileges: ['read'] },
-          { feature: SECURITY_FEATURE_ID_V3, privileges: ['read'] },
-        ],
+        default: [{ feature: SECURITY_FEATURE_ID_V3, privileges: ['read'] }],
         minimal: [
-          { feature: TIMELINE_FEATURE_ID, privileges: ['read'] },
-          { feature: NOTES_FEATURE_ID, privileges: ['read'] },
           {
             feature: SECURITY_FEATURE_ID_V3,
-            privileges: ['minimal_read', ...(isServerless ? [] : ['endpoint_exceptions_read'])],
+            privileges: ['minimal_read', 'endpoint_exceptions_read'],
           },
         ],
       },

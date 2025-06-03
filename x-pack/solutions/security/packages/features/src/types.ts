@@ -77,10 +77,10 @@ export type ProductFeaturesSiemMigrationsConfig = Map<
 
 export type AppSubFeaturesMap<T extends string = string> = Map<T, SubFeatureConfig>;
 
-export interface ProductFeatureParams<T extends string = string> {
+export interface ProductFeatureParams<T extends string = string, S extends string = string> {
   baseKibanaFeature: BaseKibanaFeatureConfig;
   baseKibanaSubFeatureIds: T[];
-  subFeaturesMap: AppSubFeaturesMap<T>;
+  subFeaturesMap: AppSubFeaturesMap<S>;
 }
 
 export interface ProductFeaturesConfigurator {
@@ -92,3 +92,10 @@ export interface ProductFeaturesConfigurator {
   notes: () => ProductFeaturesConfig;
   siemMigrations: () => ProductFeaturesConfig;
 }
+
+export type ProductFeaturesOverrides = Record<
+  string,
+  {
+    baseKibanaFeature: (current: KibanaFeatureConfig) => KibanaFeatureConfig;
+  }
+>;

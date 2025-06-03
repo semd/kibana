@@ -188,6 +188,34 @@ export const configSchema = schema.object({
       elserInferenceId: schema.maybe(schema.string()),
     })
   ),
+  /**
+   * The product features configuration for the Security Solution.
+   * This allows for overriding base Kibana features with custom configurations.
+   * The overrides replace the last value, which means that arrays and objects will not be merged.
+   */
+  productFeatures: schema.object({
+    overrides: schema.recordOf(
+      schema.string(), // feature ID
+      schema.object({
+        baseKibanaFeature: schema.arrayOf(
+          schema.object({
+            /** The path string to replace using lodash set */
+            path: schema.string({
+              validate: (value) => {
+                if (value === 'id') {
+                  return `Not allowed to override the Kibana feature "id".`;
+                }
+              },
+            }),
+            /** The value to set at the key */
+            value: schema.any(),
+          }),
+          { defaultValue: [] }
+        ),
+      }),
+      { defaultValue: {} }
+    ),
+  }),
 });
 
 export type ConfigSchema = TypeOf<typeof configSchema>;

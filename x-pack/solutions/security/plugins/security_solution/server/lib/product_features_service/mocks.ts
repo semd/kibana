@@ -82,7 +82,7 @@ export const createProductFeaturesServiceMock = (
 ) => {
   const productFeaturesService = new ProductFeaturesService(logger, experimentalFeatures, false);
 
-  productFeaturesService.init(featuresPluginSetupContract);
+  productFeaturesService.setup(featuresPluginSetupContract);
 
   if (enabledFeatureKeys) {
     productFeaturesService.setProductFeaturesConfigurator({
