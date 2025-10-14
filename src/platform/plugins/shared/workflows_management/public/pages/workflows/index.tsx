@@ -17,11 +17,13 @@ import {
   EuiPageTemplate,
   useEuiTheme,
 } from '@elastic/eui';
+import React, { useState } from 'react';
+
 import { i18n } from '@kbn/i18n';
 import { FormattedMessage } from '@kbn/i18n-react';
 import { useKibana } from '@kbn/kibana-react-plugin/public';
 import { WORKFLOW_EXECUTION_STATS_BAR_SETTING_ID } from '@kbn/workflows/common/constants';
-import React, { useState } from 'react';
+
 import { useWorkflowActions } from '../../entities/workflows/model/use_workflow_actions';
 import { useWorkflowFiltersOptions } from '../../entities/workflows/model/use_workflow_stats';
 import { useWorkflows } from '../../entities/workflows/model/use_workflows';
@@ -89,7 +91,7 @@ export function WorkflowsPage() {
             'message' in error.body &&
             typeof error.body.message === 'string'
           ) {
-            (error as any).message = error.body.message;
+            (error as Error & { body: { message: string } }).message = error.body.message;
           }
 
           notifications!.toasts.addError(error, {
