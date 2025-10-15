@@ -8,6 +8,7 @@
  */
 
 import type { ExitFallbackPathNode } from '@kbn/workflows/graph';
+
 import type { WorkflowExecutionRuntimeManager } from '../../../../workflow_context_manager/workflow_execution_runtime_manager';
 import { ExitFallbackPathNodeImpl } from '../exit_fallback_path_node_impl';
 

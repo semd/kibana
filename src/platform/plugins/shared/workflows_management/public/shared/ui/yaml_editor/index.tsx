@@ -7,12 +7,13 @@
  * License v3.0 only", or the "Server Side Public License, v 1".
  */
 
+import { debounce } from 'lodash';
+import type { MonacoYamlOptions } from 'monaco-yaml';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
+
 import type { CodeEditorProps } from '@kbn/code-editor';
 import { CodeEditor } from '@kbn/code-editor';
 import { configureMonacoYamlSchema } from '@kbn/monaco';
-import type { MonacoYamlOptions } from 'monaco-yaml';
-import { debounce } from 'lodash';
 
 interface YamlEditorProps extends Omit<CodeEditorProps, 'languageId' | 'onChange'> {
   onChange: (value: string | undefined) => void;

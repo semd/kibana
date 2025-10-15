@@ -8,6 +8,7 @@
  */
 
 import type { WorkflowYaml } from '@kbn/workflows/spec/schema';
+
 import { validateStepNameUniqueness } from './validate_step_names';
 
 describe('validateStepNameUniqueness', () => {

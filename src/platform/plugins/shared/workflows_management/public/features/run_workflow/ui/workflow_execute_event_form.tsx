@@ -9,19 +9,21 @@
 
 import type { EuiBasicTableColumn } from '@elastic/eui';
 import {
+  EuiBasicTable,
   EuiCallOut,
   EuiFlexGroup,
   EuiFlexItem,
   EuiLoadingSpinner,
   EuiSpacer,
   EuiText,
-  EuiBasicTable,
 } from '@elastic/eui';
-import React, { useEffect, useState, useCallback } from 'react';
-import { KBN_FIELD_TYPES } from '@kbn/field-types';
-import type { Query, TimeRange } from '@kbn/data-plugin/common';
+import React, { useCallback, useEffect, useState } from 'react';
 import { take } from 'rxjs';
+
+import type { Query, TimeRange } from '@kbn/data-plugin/common';
 import { buildEsQuery } from '@kbn/es-query';
+import { KBN_FIELD_TYPES } from '@kbn/field-types';
+
 import { useKibana } from '../../../hooks/use_kibana';
 
 interface Alert {

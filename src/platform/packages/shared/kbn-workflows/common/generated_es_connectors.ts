@@ -18,6 +18,7 @@
  */
 
 import { z } from '@kbn/zod';
+
 import type { InternalConnectorContract } from '..';
 
 export const GENERATED_ELASTICSEARCH_CONNECTORS: InternalConnectorContract[] = [

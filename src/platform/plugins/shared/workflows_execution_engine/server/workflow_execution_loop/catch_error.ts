@@ -9,9 +9,10 @@
 
 import { ExecutionStatus } from '@kbn/workflows';
 import type { GraphNodeUnion } from '@kbn/workflows/graph';
+
+import type { WorkflowExecutionLoopParams } from './types';
 import type { NodeWithErrorCatching } from '../step/node_implementation';
 import { WorkflowContextManager } from '../workflow_context_manager/workflow_context_manager';
-import type { WorkflowExecutionLoopParams } from './types';
 
 /**
  * Handles workflow execution errors by bubbling them up through the scope hierarchy

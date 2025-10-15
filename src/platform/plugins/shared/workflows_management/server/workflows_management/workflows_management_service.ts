@@ -8,6 +8,8 @@
  */
 
 import type { estypes } from '@elastic/elasticsearch';
+import { v4 as generateUuid } from 'uuid';
+
 import type {
   ElasticsearchClient,
   KibanaRequest,
@@ -34,17 +36,7 @@ import type {
   WorkflowAggsDto,
   WorkflowStatsDto,
 } from '@kbn/workflows/types/v1';
-import { v4 as generateUuid } from 'uuid';
-import { InvalidYamlSchemaError, WorkflowValidationError } from '../../common/lib/errors';
-import { validateStepNameUniqueness } from '../../common/lib/validate_step_names';
 
-import { parseWorkflowYamlToJSON, stringifyWorkflowDefinition } from '../../common/lib/yaml_utils';
-import { getWorkflowZodSchema, getWorkflowZodSchemaLoose } from '../../common/schema';
-import { getAuthenticatedUser } from '../lib/get_user';
-import { hasScheduledTriggers } from '../lib/schedule_utils';
-import type { WorkflowProperties, WorkflowStorage } from '../storage/workflow_storage';
-import { createStorage } from '../storage/workflow_storage';
-import type { WorkflowTaskScheduler } from '../tasks/workflow_task_scheduler';
 import { createOrUpdateIndex } from './lib/create_index';
 import { getWorkflowExecution } from './lib/get_workflow_execution';
 import {
@@ -61,6 +53,15 @@ import type {
   GetStepLogsParams,
   GetWorkflowsParams,
 } from './workflows_management_api';
+import { InvalidYamlSchemaError, WorkflowValidationError } from '../../common/lib/errors';
+import { validateStepNameUniqueness } from '../../common/lib/validate_step_names';
+import { parseWorkflowYamlToJSON, stringifyWorkflowDefinition } from '../../common/lib/yaml_utils';
+import { getWorkflowZodSchema, getWorkflowZodSchemaLoose } from '../../common/schema';
+import { getAuthenticatedUser } from '../lib/get_user';
+import { hasScheduledTriggers } from '../lib/schedule_utils';
+import type { WorkflowProperties, WorkflowStorage } from '../storage/workflow_storage';
+import { createStorage } from '../storage/workflow_storage';
+import type { WorkflowTaskScheduler } from '../tasks/workflow_task_scheduler';
 
 export interface SearchWorkflowExecutionsParams {
   workflowId: string;
@@ -176,7 +177,7 @@ export class WorkflowsService {
 
     const parsedYaml = parseWorkflowYamlToJSON(workflow.yaml, getWorkflowZodSchemaLoose());
     if (!parsedYaml.success) {
-      throw new Error('Invalid workflow yaml: ' + parsedYaml.error.message);
+      throw new Error(`Invalid workflow yaml: ${parsedYaml.error.message}`);
     }
 
     // Validate step name uniqueness

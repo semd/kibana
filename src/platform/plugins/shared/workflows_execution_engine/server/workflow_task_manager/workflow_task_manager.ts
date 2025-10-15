@@ -8,6 +8,7 @@
  */
 
 import type { TaskManagerStartContract } from '@kbn/task-manager-plugin/server';
+
 import type { ResumeWorkflowExecutionParams } from './types';
 
 export class WorkflowTaskManager {

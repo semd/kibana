@@ -8,9 +8,10 @@
  */
 
 import { stringify, type ToStringOptions } from 'yaml';
+
 import { isMac } from '../../../../shared/utils/is_mac';
-import { getRequiredParamsForConnector } from '../get_required_params_for_connector';
 import { getCachedAllConnectors } from '../connectors_cache';
+import { getRequiredParamsForConnector } from '../get_required_params_for_connector';
 
 interface GenerateConnectorSnippetOptions {
   full?: boolean;

@@ -8,6 +8,7 @@
  */
 
 import { monaco } from '@kbn/monaco/src/monaco_imports';
+
 import { createMockModel } from './monaco_model';
 
 describe('createMockModel', () => {

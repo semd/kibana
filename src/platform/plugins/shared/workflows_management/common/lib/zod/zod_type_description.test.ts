@@ -8,11 +8,12 @@
  */
 
 import { z } from '@kbn/zod';
+
 import {
-  getDetailedTypeDescription,
-  getTypeScriptLikeDescription,
   getCompactTypeDescription,
+  getDetailedTypeDescription,
   getJsonSchemaDescription,
+  getTypeScriptLikeDescription,
 } from './zod_type_description';
 
 describe('zod_type_description', () => {

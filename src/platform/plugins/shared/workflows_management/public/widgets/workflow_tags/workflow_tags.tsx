@@ -10,6 +10,7 @@
 import { EuiBadge, EuiBadgeGroup, EuiPopover, EuiPopoverTitle } from '@elastic/eui';
 import { css } from '@emotion/react';
 import React, { useState } from 'react';
+
 import * as i18n from '../../../common/translations';
 
 interface WorkflowTagsProps {

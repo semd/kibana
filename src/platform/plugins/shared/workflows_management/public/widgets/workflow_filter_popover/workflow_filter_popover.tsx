@@ -7,18 +7,18 @@
  * License v3.0 only", or the "Server Side Public License, v 1".
  */
 
-import React, { useEffect, useState } from 'react';
 import type { EuiSelectableOption } from '@elastic/eui';
 import { EuiFilterButton, EuiPopover, EuiPopoverTitle, EuiSelectable } from '@elastic/eui';
+import React, { useEffect, useState } from 'react';
 
 const WORKFLOW_POPOVER_WIDTH = 500;
 
 interface WorkflowFilterPopoverProps {
   filter: string;
   title: string;
-  selectedValues: any[];
+  selectedValues: unknown[];
   values: EuiSelectableOption[];
-  onSelectedValuesChanged: (newValues: any[]) => void;
+  onSelectedValuesChanged: (newValues: any[]) => void; // eslint-disable-line @typescript-eslint/no-explicit-any
 }
 
 const WorkflowsFilterPopoverComponent = ({
@@ -43,9 +43,7 @@ const WorkflowsFilterPopoverComponent = ({
 
   const handleSelectableOptionsChange = (newOptions: EuiSelectableOption[]) => {
     onSelectedValuesChanged(
-      newOptions
-        .map(({ key, checked }: any): string | number | boolean | null => (checked ? key : null))
-        .filter((value) => value !== null)
+      newOptions.map(({ key, checked }) => (checked ? key : null)).filter((value) => value !== null)
     );
   };
 

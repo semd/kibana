@@ -8,10 +8,11 @@
  */
 
 import type { EnterTimeoutZoneNode } from '@kbn/workflows/graph';
-import { EnterStepTimeoutZoneNodeImpl } from '../enter_step_timeout_zone_node_impl';
-import type { WorkflowExecutionRuntimeManager } from '../../../../workflow_context_manager/workflow_execution_runtime_manager';
+
 import type { WorkflowContextManager } from '../../../../workflow_context_manager/workflow_context_manager';
+import type { WorkflowExecutionRuntimeManager } from '../../../../workflow_context_manager/workflow_execution_runtime_manager';
 import type { WorkflowExecutionState } from '../../../../workflow_context_manager/workflow_execution_state';
+import { EnterStepTimeoutZoneNodeImpl } from '../enter_step_timeout_zone_node_impl';
 
 describe('EnterStepTimeoutZoneNodeImpl', () => {
   let node: EnterTimeoutZoneNode;

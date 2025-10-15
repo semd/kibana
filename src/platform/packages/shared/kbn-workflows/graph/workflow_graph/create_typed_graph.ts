@@ -8,6 +8,7 @@
  */
 
 import { graphlib } from '@dagrejs/dagre';
+
 import type { GraphNodeUnion } from '../types';
 
 export function createTypedGraph(opt?: {

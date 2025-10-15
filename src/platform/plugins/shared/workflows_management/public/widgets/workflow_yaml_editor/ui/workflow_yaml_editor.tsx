@@ -9,36 +9,47 @@
 
 import type { UseEuiTheme } from '@elastic/eui';
 import {
-  useEuiTheme,
+  EuiButton,
   EuiFlexGroup,
   EuiFlexItem,
-  EuiButton,
-  transparentize,
   EuiIcon,
+  transparentize,
+  useEuiTheme,
 } from '@elastic/eui';
 import { css } from '@emotion/react';
+import type { SchemasSettings } from 'monaco-yaml';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import type YAML from 'yaml';
+import { isPair, isScalar, type Pair, type Scalar } from 'yaml';
+
 import type { CoreStart } from '@kbn/core/public';
 import { useMemoCss } from '@kbn/css-utils/public/use_memo_css';
 import { i18n } from '@kbn/i18n';
+import { useKibana } from '@kbn/kibana-react-plugin/public';
 import { monaco } from '@kbn/monaco';
 import { getJsonSchemaFromYamlSchema, isTriggerType } from '@kbn/workflows';
 import type { WorkflowStepExecutionDto } from '@kbn/workflows/types/v1';
-import type { SchemasSettings } from 'monaco-yaml';
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { useKibana } from '@kbn/kibana-react-plugin/public';
-import type YAML from 'yaml';
-import { type Pair, type Scalar, isPair, isScalar } from 'yaml';
-import { useDispatch, useSelector } from 'react-redux';
+
+import { StepActions } from './step_actions';
+import { WorkflowYAMLEditorShortcuts } from './workflow_yaml_editor_shortcuts';
+import { WorkflowYAMLValidationErrors } from './workflow_yaml_validation_errors';
 import {
+  formatValidationError,
+  getCurrentPath,
   getStepNodesWithType,
   getTriggerNodes,
   getTriggerNodesWithType,
 } from '../../../../common/lib/yaml_utils';
-import { formatValidationError, getCurrentPath } from '../../../../common/lib/yaml_utils';
 import { getWorkflowZodSchema, getWorkflowZodSchemaLoose } from '../../../../common/schema';
+import { ActionsMenuPopover } from '../../../features/actions_menu_popover';
+import type { ActionOptionData } from '../../../features/actions_menu_popover/types';
+import { useYamlValidation } from '../../../features/validate_workflow_yaml/lib/use_yaml_validation';
+import type { YamlValidationResult } from '../../../features/validate_workflow_yaml/model/types';
 import { UnsavedChangesPrompt } from '../../../shared/ui/unsaved_changes_prompt';
 import { YamlEditor } from '../../../shared/ui/yaml_editor';
 import { getCompletionItemProvider } from '../lib/get_completion_item_provider';
+import { useFocusedStepOutline, useStepDecorationsInExecution } from '../lib/hooks';
 import {
   ElasticsearchMonacoConnectorHandler,
   GenericMonacoConnectorHandler,
@@ -48,17 +59,8 @@ import {
   registerMonacoConnectorHandler,
   registerUnifiedHoverProvider,
 } from '../lib/monaco_providers';
-import { useYamlValidation } from '../../../features/validate_workflow_yaml/lib/use_yaml_validation';
-import { getMonacoRangeFromYamlNode, navigateToErrorPosition } from '../lib/utils';
-import { StepActions } from './step_actions';
-import type { YamlValidationResult } from '../../../features/validate_workflow_yaml/model/types';
-import { ActionsMenuPopover } from '../../../features/actions_menu_popover';
-import type { ActionOptionData } from '../../../features/actions_menu_popover/types';
-import { WorkflowYAMLValidationErrors } from './workflow_yaml_validation_errors';
-import { WorkflowYAMLEditorShortcuts } from './workflow_yaml_editor_shortcuts';
-import { insertTriggerSnippet } from '../lib/snippets/insert_trigger_snippet';
 import { insertStepSnippet } from '../lib/snippets/insert_step_snippet';
-import { useRegisterKeyboardCommands } from '../lib/use_register_keyboard_commands';
+import { insertTriggerSnippet } from '../lib/snippets/insert_trigger_snippet';
 import type { StepInfo } from '../lib/store';
 import {
   selectFocusedStepInfo,
@@ -67,7 +69,8 @@ import {
   setStepExecutions,
   setYamlString,
 } from '../lib/store';
-import { useFocusedStepOutline, useStepDecorationsInExecution } from '../lib/hooks';
+import { useRegisterKeyboardCommands } from '../lib/use_register_keyboard_commands';
+import { getMonacoRangeFromYamlNode, navigateToErrorPosition } from '../lib/utils';
 
 const WorkflowSchemaUri = 'file:///workflow-schema.json';
 
@@ -80,7 +83,7 @@ const useWorkflowJsonSchema = () => {
       const jsonSchema = getJsonSchemaFromYamlSchema(zodSchema);
 
       // Post-process to improve validation messages and reduce duplicate suggestions
-      const processedSchema = improveTypeFieldDescriptions(jsonSchema);
+      const processedSchema = jsonSchema;
 
       return processedSchema ?? null;
     } catch (error) {
@@ -89,16 +92,6 @@ const useWorkflowJsonSchema = () => {
     }
   }, []);
 };
-
-/**
- * Since we implemented custom error formatting at the validation level,
- * we no longer need to modify the schema. The full validation works with
- * user-friendly error messages.
- */
-function improveTypeFieldDescriptions(schema: any): any {
-  // Return schema as-is - custom error formatter handles user experience
-  return schema;
-}
 
 export interface WorkflowYAMLEditorProps {
   workflowId?: string;
@@ -163,7 +156,7 @@ export const WorkflowYAMLEditor = ({
       {
         fileMatch: ['*'],
         // casting here because zod-to-json-schema returns a more complex type than JSONSchema7 expected by monaco-yaml
-        schema: workflowJsonSchema as any,
+        schema: workflowJsonSchema,
         uri: WorkflowSchemaUri,
       },
     ];
@@ -184,9 +177,9 @@ export const WorkflowYAMLEditor = ({
   const connectorTypeDecorationCollectionRef =
     useRef<monaco.editor.IEditorDecorationsCollection | null>(null);
   const unifiedProvidersRef = useRef<{
-    hover: any;
-    actions: any;
-    stepExecution: any;
+    hover: any; // eslint-disable-line @typescript-eslint/no-explicit-any
+    actions: any; // eslint-disable-line @typescript-eslint/no-explicit-any
+    stepExecution: any; // eslint-disable-line @typescript-eslint/no-explicit-any
   } | null>(null);
 
   // Disposables for Monaco providers
@@ -484,7 +477,8 @@ export const WorkflowYAMLEditor = ({
         // Register Elasticsearch connector handler
         const elasticsearchHandler = new ElasticsearchMonacoConnectorHandler({
           http,
-          notifications: notifications as any, // Temporary type cast
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          notifications: notifications as any, // "Temporary" type cast
           // esHost,
           // kibanaHost || window.location.origin,
         });
@@ -493,7 +487,8 @@ export const WorkflowYAMLEditor = ({
         // Register Kibana connector handler
         const kibanaHandler = new KibanaMonacoConnectorHandler({
           http,
-          notifications: notifications as any, // Temporary type cast
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          notifications: notifications as any, // "Temporary" type cast
           kibanaHost: kibanaHost || window.location.origin,
         });
         registerMonacoConnectorHandler(kibanaHandler);
@@ -506,7 +501,8 @@ export const WorkflowYAMLEditor = ({
           getYamlDocument: () => yamlDocumentRef.current || null,
           options: {
             http,
-            notifications: notifications as any,
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            notifications: notifications as any, // "Temporary" type cast
             esHost,
             kibanaHost: kibanaHost || window.location.origin,
           },
@@ -515,6 +511,7 @@ export const WorkflowYAMLEditor = ({
         // Intercept and modify markers at the source to fix connector validation messages
         // This prevents Monaco from ever seeing the problematic numeric enum messages
         const originalSetModelMarkers = monaco.editor.setModelMarkers;
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const markerInterceptor = function (editorModel: any, owner: string, markers: any[]) {
           // Only process YAML validation markers
 
@@ -574,7 +571,7 @@ export const WorkflowYAMLEditor = ({
 
                   // Use the dynamic formatValidationError with schema and YAML document
                   const { message: formattedMessage } = formatValidationError(
-                    mockZodError as any,
+                    mockZodError as any, // eslint-disable-line @typescript-eslint/no-explicit-any
                     workflowYamlSchemaLoose,
                     currentYamlDocument
                   );
@@ -797,6 +794,7 @@ export const WorkflowYAMLEditor = ({
 
   // Handle connector type decorations (GitLens-style inline icons)
   useEffect(() => {
+    // eslint-disable-next-line complexity
     const timeoutId = setTimeout(() => {
       if (!isEditorMounted || !editorRef.current || !yamlDocument) {
         return;
@@ -828,12 +826,14 @@ export const WorkflowYAMLEditor = ({
         });
 
         if (!typePair || !isScalar(typePair.value)) {
+          // eslint-disable-next-line no-continue
           continue;
         }
 
         const connectorType = typePair.value.value;
 
         if (typeof connectorType !== 'string') {
+          // eslint-disable-next-line no-continue
           continue;
         }
 
@@ -843,11 +843,13 @@ export const WorkflowYAMLEditor = ({
         // allow "if" as a special case
         if (connectorType.length < 3 && connectorType !== 'if') {
           // console.log('🎨 Skipping short connector type:', connectorType);
+          // eslint-disable-next-line no-continue
           continue; // Skip this iteration
         }
 
         const typeRange = typePair.value.range;
 
+        // eslint-disable-next-line no-continue
         if (!typeRange || !Array.isArray(typeRange) || typeRange.length < 3) continue;
 
         // Get icon and class based on connector type
@@ -868,6 +870,7 @@ export const WorkflowYAMLEditor = ({
 
           // Check if this line starts with "type:" (after whitespace)
           if (!trimmedLine.startsWith('type:')) {
+            // eslint-disable-next-line no-continue
             continue; // Skip this decoration
           }
 
@@ -957,23 +960,27 @@ export const WorkflowYAMLEditor = ({
             isPair(item) && isScalar(item.key) && isScalar(item.value) && item.key.value === 'type'
         );
         if (!typePair?.value?.value) {
+          // eslint-disable-next-line no-continue
           continue;
         }
 
         const triggerType = typePair.value.value;
 
         if (typeof triggerType !== 'string') {
+          // eslint-disable-next-line no-continue
           continue;
         }
 
         // Skip decoration for very short trigger types to avoid false matches
         if (triggerType.length < 3) {
+          // eslint-disable-next-line no-continue
           continue; // Skip this iteration
         }
 
         const typeRange = typePair.value.range;
 
         if (!typeRange || !Array.isArray(typeRange) || typeRange.length < 3) {
+          // eslint-disable-next-line no-continue
           continue;
         }
 
@@ -995,6 +1002,7 @@ export const WorkflowYAMLEditor = ({
 
           // Check if this line contains "type:" (after whitespace and optional dash for array items)
           if (!trimmedLine.startsWith('type:') && !trimmedLine.startsWith('- type:')) {
+            // eslint-disable-next-line no-continue
             continue; // Skip this decoration
           }
 
@@ -1463,7 +1471,7 @@ export const WorkflowYAMLEditor = ({
                 }}
               >
                 <EuiIcon type="download" size="s" />
-                <span>Schema</span>
+                <span>{'Schema'}</span>
               </div>
             </EuiFlexItem>
           </EuiFlexGroup>

@@ -8,6 +8,7 @@
  */
 
 import { useQuery } from '@tanstack/react-query';
+
 import { useKibana } from '@kbn/kibana-react-plugin/public';
 
 interface WorkflowExecutionLogEntry {

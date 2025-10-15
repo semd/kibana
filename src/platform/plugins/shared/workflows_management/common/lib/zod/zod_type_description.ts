@@ -7,9 +7,10 @@
  * License v3.0 only", or the "Server Side Public License, v 1".
  */
 
+import { zodToJsonSchema } from 'zod-to-json-schema';
+
 import type { ZodFirstPartySchemaTypes } from '@kbn/zod';
 import { z } from '@kbn/zod';
-import { zodToJsonSchema } from 'zod-to-json-schema';
 
 export interface TypeDescriptionOptions {
   /** Maximum depth for nested objects */

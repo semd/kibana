@@ -8,12 +8,12 @@
  */
 
 import type { EnterTimeoutZoneNode } from '@kbn/workflows/graph';
-import type { NodeImplementation, MonitorableNode } from '../../node_implementation';
-import type { WorkflowExecutionRuntimeManager } from '../../../workflow_context_manager/workflow_execution_runtime_manager';
-import type { WorkflowExecutionState } from '../../../workflow_context_manager/workflow_execution_state';
 
 import { parseDuration } from '../../../utils';
 import type { WorkflowContextManager } from '../../../workflow_context_manager/workflow_context_manager';
+import type { WorkflowExecutionRuntimeManager } from '../../../workflow_context_manager/workflow_execution_runtime_manager';
+import type { WorkflowExecutionState } from '../../../workflow_context_manager/workflow_execution_state';
+import type { MonitorableNode, NodeImplementation } from '../../node_implementation';
 
 export class EnterStepTimeoutZoneNodeImpl implements NodeImplementation, MonitorableNode {
   constructor(

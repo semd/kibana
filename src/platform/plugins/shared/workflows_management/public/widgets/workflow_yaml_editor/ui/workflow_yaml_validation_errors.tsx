@@ -7,20 +7,22 @@
  * License v3.0 only", or the "Server Side Public License, v 1".
  */
 
-import React from 'react';
-import { css } from '@emotion/react';
 import type { UseEuiTheme } from '@elastic/eui';
 import {
-  EuiLoadingSpinner,
-  EuiIcon,
-  useGeneratedHtmlId,
   EuiAccordion,
-  EuiFlexItem,
   EuiFlexGroup,
-  useEuiTheme,
+  EuiFlexItem,
   euiFontSize,
+  EuiIcon,
+  EuiLoadingSpinner,
+  useEuiTheme,
+  useGeneratedHtmlId,
 } from '@elastic/eui';
+import { css } from '@emotion/react';
+import React from 'react';
+
 import { useMemoCss } from '@kbn/css-utils/public/use_memo_css';
+
 import type { YamlValidationResult } from '../../../features/validate_workflow_yaml/model/types';
 
 const severityOrder = ['error', 'warning', 'info'];

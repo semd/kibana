@@ -8,11 +8,13 @@
  */
 
 import { createSlice } from '@reduxjs/toolkit';
-import type { WorkflowGraph } from '@kbn/workflows/graph';
 import type YAML from 'yaml';
+
 import type { WorkflowStepExecutionDto } from '@kbn/workflows';
-import type { WorkflowLookup } from './utils/build_workflow_lookup';
+import type { WorkflowGraph } from '@kbn/workflows/graph';
+
 import type { WorkflowEditorState } from './types';
+import type { WorkflowLookup } from './utils/build_workflow_lookup';
 import { findStepByLine } from './utils/step_finder';
 
 // Initial state

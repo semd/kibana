@@ -21,11 +21,12 @@ import {
   EuiSelectable,
   EuiText,
 } from '@elastic/eui';
+import React, { useCallback, useEffect, useState } from 'react';
 
 import { useKibana } from '@kbn/kibana-react-plugin/public';
 import type { ActionParamsProps } from '@kbn/triggers-actions-ui-plugin/public';
 import type { WorkflowListDto } from '@kbn/workflows';
-import React, { useCallback, useEffect, useState } from 'react';
+
 import * as i18n from './translations';
 import type { WorkflowsActionParams } from './types';
 

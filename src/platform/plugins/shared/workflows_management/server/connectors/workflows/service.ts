@@ -8,9 +8,9 @@
  */
 
 import type { ActionsConfigurationUtilities } from '@kbn/actions-plugin/server/actions_config';
-
 import type { ConnectorUsageCollector } from '@kbn/actions-plugin/server/types';
 import type { KibanaRequest, Logger } from '@kbn/core/server';
+
 import type { ExternalService, RunWorkflowParams, WorkflowExecutionResponse } from './types';
 import { createServiceError } from './utils';
 

@@ -8,6 +8,7 @@
  */
 
 import type { ElasticsearchClient, Logger } from '@kbn/core/server';
+
 import type { GetExecutionLogsParams, GetStepLogsParams } from '../workflows_management_api';
 
 // Simple interfaces for workflow logging

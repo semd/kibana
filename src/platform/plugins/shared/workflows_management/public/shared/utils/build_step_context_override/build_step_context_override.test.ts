@@ -8,6 +8,7 @@
  */
 
 import { WorkflowGraph } from '@kbn/workflows/graph';
+
 import { buildContextOverride } from './build_step_context_override';
 
 describe('buildContextOverride', () => {

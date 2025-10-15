@@ -8,10 +8,11 @@
  */
 
 import { ExecutionStatus } from '@kbn/workflows';
-import type { WorkflowExecutionState } from '../workflow_context_manager/workflow_execution_state';
-import type { WorkflowContextManager } from '../workflow_context_manager/workflow_context_manager';
+
 import type { WorkflowExecutionRepository } from '../repositories/workflow_execution_repository';
 import { buildStepExecutionId } from '../utils';
+import type { WorkflowContextManager } from '../workflow_context_manager/workflow_context_manager';
+import type { WorkflowExecutionState } from '../workflow_context_manager/workflow_execution_state';
 
 /**
  * This function retrieves the current workflow execution and verifies if cancellation requested.

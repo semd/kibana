@@ -7,12 +7,14 @@
  * License v3.0 only", or the "Server Side Public License, v 1".
  */
 
+import { lazy } from 'react';
+
 import { i18n } from '@kbn/i18n';
 import type {
   ActionTypeModel as ConnectorTypeModel,
   GenericValidationResult,
 } from '@kbn/triggers-actions-ui-plugin/public';
-import { lazy } from 'react';
+
 import type { WorkflowsActionParams, WorkflowsConfig, WorkflowsSecrets } from './types';
 
 export function getConnectorType(): ConnectorTypeModel<

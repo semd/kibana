@@ -9,48 +9,49 @@
 
 import { graphlib } from '@dagrejs/dagre';
 import { omit } from 'lodash';
+
 import type {
   BaseStep,
+  ElasticsearchStep,
   ForEachStep,
   HttpStep,
   IfStep,
-  WaitStep,
-  ElasticsearchStep,
   KibanaStep,
-  WorkflowYaml,
-  WorkflowRetry,
-  StepWithOnFailure,
-  StepWithIfCondition,
   StepWithForeach,
-  WorkflowSettings,
-  WorkflowOnFailure,
+  StepWithIfCondition,
+  StepWithOnFailure,
   TimeoutProp,
+  WaitStep,
+  WorkflowOnFailure,
+  WorkflowRetry,
+  WorkflowSettings,
+  WorkflowYaml,
 } from '../../spec/schema';
 import type {
   AtomicGraphNode,
+  ElasticsearchGraphNode,
   EnterConditionBranchNode,
+  EnterContinueNode,
+  EnterFallbackPathNode,
   EnterForeachNode,
   EnterIfNode,
+  EnterNormalPathNode,
+  EnterRetryNode,
+  EnterTimeoutZoneNode,
+  EnterTryBlockNode,
   ExitConditionBranchNode,
+  ExitContinueNode,
+  ExitFallbackPathNode,
   ExitForeachNode,
   ExitIfNode,
-  HttpGraphNode,
-  WaitGraphNode,
-  ElasticsearchGraphNode,
-  KibanaGraphNode,
-  EnterRetryNode,
-  ExitRetryNode,
-  EnterContinueNode,
-  ExitContinueNode,
-  EnterTryBlockNode,
-  ExitTryBlockNode,
-  EnterNormalPathNode,
   ExitNormalPathNode,
-  EnterFallbackPathNode,
-  ExitFallbackPathNode,
-  EnterTimeoutZoneNode,
+  ExitRetryNode,
   ExitTimeoutZoneNode,
+  ExitTryBlockNode,
   GraphNodeUnion,
+  HttpGraphNode,
+  KibanaGraphNode,
+  WaitGraphNode,
   WorkflowGraphType,
 } from '../types';
 import { createTypedGraph } from '../workflow_graph/create_typed_graph';
@@ -363,7 +364,7 @@ function visitOnFailure(
     [
       {
         ...currentStep,
-        ['on-failure']: undefined, // Remove 'on-failure' to avoid infinite recursion
+        'on-failure': undefined, // Remove 'on-failure' to avoid infinite recursion
       } as BaseStep,
     ],
     context

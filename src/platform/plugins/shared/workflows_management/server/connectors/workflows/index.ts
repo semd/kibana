@@ -16,6 +16,7 @@ import type {
 import type { ConnectorAdapter } from '@kbn/alerting-plugin/server';
 import { schema } from '@kbn/config-schema';
 import type { KibanaRequest } from '@kbn/core/server';
+
 import { api } from './api';
 import { ExecutorParamsSchema, WorkflowsRuleActionParamsSchema } from './schema';
 import { createExternalService, type WorkflowsServiceFunction } from './service';

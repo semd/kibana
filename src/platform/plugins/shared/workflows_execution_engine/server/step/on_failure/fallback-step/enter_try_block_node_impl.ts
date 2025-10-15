@@ -8,8 +8,9 @@
  */
 
 import type { EnterTryBlockNode } from '@kbn/workflows/graph';
-import type { NodeImplementation } from '../../node_implementation';
+
 import type { WorkflowExecutionRuntimeManager } from '../../../workflow_context_manager/workflow_execution_runtime_manager';
+import type { NodeImplementation } from '../../node_implementation';
 
 export class EnterTryBlockNodeImpl implements NodeImplementation {
   constructor(

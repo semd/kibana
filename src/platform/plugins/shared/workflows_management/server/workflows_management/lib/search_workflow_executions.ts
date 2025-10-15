@@ -12,6 +12,7 @@ import type {
   SearchResponse,
   Sort,
 } from '@elastic/elasticsearch/lib/api/types';
+
 import type { ElasticsearchClient, Logger } from '@kbn/core/server';
 import type { EsWorkflowExecution, WorkflowExecutionListDto } from '@kbn/workflows';
 

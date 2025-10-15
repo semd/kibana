@@ -7,10 +7,12 @@
  * License v3.0 only", or the "Server Side Public License, v 1".
  */
 
-import { useEuiTheme, EuiLoadingSpinner, EuiBeacon, EuiToken, EuiIcon } from '@elastic/eui';
-import { ExecutionStatus } from '@kbn/workflows';
-import React from 'react';
+import { EuiBeacon, EuiIcon, EuiLoadingSpinner, EuiToken, useEuiTheme } from '@elastic/eui';
 import { css } from '@emotion/react';
+import React from 'react';
+
+import { ExecutionStatus } from '@kbn/workflows';
+
 import { getStepIconType } from './get_step_icon_type';
 import { getExecutionStatusColors } from './status_badge';
 

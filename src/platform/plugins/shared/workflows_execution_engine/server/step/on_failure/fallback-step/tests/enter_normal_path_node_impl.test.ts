@@ -8,6 +8,7 @@
  */
 
 import type { EnterNormalPathNode } from '@kbn/workflows/graph';
+
 import type { WorkflowExecutionRuntimeManager } from '../../../../workflow_context_manager/workflow_execution_runtime_manager';
 import type { IWorkflowEventLogger } from '../../../../workflow_event_logger/workflow_event_logger';
 import { EnterNormalPathNodeImpl } from '../enter_normal_path_node_impl';

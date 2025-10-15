@@ -7,17 +7,19 @@
  * License v3.0 only", or the "Server Side Public License, v 1".
  */
 
-import type { SafeParseReturnType } from '@kbn/zod';
-import { z } from '@kbn/zod';
-import {
-  stringifyWorkflowDefinition,
-  parseWorkflowYamlToJSON,
-  formatValidationError,
-  getStepNodeAtPosition,
-} from './yaml_utils';
+import { parseDocument, YAMLMap } from 'yaml';
+
 import type { ConnectorContract, WorkflowYaml } from '@kbn/workflows';
 import { generateYamlSchemaFromConnectors } from '@kbn/workflows';
-import { YAMLMap, parseDocument } from 'yaml';
+import type { SafeParseReturnType } from '@kbn/zod';
+import { z } from '@kbn/zod';
+
+import {
+  formatValidationError,
+  getStepNodeAtPosition,
+  parseWorkflowYamlToJSON,
+  stringifyWorkflowDefinition,
+} from './yaml_utils';
 
 describe('parseWorkflowYamlToJSON', () => {
   const mockConnectors: ConnectorContract[] = [

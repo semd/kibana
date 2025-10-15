@@ -10,6 +10,7 @@
 import type { WorkflowYaml } from '@kbn/workflows';
 import { WorkflowContextSchema } from '@kbn/workflows';
 import { z } from '@kbn/zod';
+
 import { inferZodType } from '../../../../common/lib/zod';
 
 export function getWorkflowContextSchema(definition: WorkflowYaml) {

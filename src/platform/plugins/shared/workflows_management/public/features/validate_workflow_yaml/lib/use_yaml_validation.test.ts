@@ -7,9 +7,11 @@
  * License v3.0 only", or the "Server Side Public License, v 1".
  */
 
+import { renderHook } from '@testing-library/react';
+
 import { monaco } from '@kbn/monaco';
 import { z } from '@kbn/zod';
-import { renderHook } from '@testing-library/react';
+
 import { useYamlValidation } from './use_yaml_validation';
 
 // Mock Monaco editor

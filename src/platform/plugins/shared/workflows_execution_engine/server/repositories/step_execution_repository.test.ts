@@ -7,9 +7,10 @@
  * License v3.0 only", or the "Server Side Public License, v 1".
  */
 
-import { WORKFLOWS_STEP_EXECUTIONS_INDEX } from '../../common';
-import { StepExecutionRepository } from './step_execution_repository';
 import { ExecutionStatus } from '@kbn/workflows';
+
+import { StepExecutionRepository } from './step_execution_repository';
+import { WORKFLOWS_STEP_EXECUTIONS_INDEX } from '../../common';
 
 describe('StepExecutionRepository', () => {
   let repository: StepExecutionRepository;

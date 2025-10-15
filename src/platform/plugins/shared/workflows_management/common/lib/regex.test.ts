@@ -7,7 +7,7 @@
  * License v3.0 only", or the "Server Side Public License, v 1".
  */
 
-import { VARIABLE_REGEX_GLOBAL, UNFINISHED_VARIABLE_REGEX_GLOBAL } from './regex';
+import { UNFINISHED_VARIABLE_REGEX_GLOBAL, VARIABLE_REGEX_GLOBAL } from './regex';
 
 describe('Mustache regex patterns', () => {
   describe('MUSTACHE_REGEX_GLOBAL', () => {

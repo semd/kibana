@@ -8,6 +8,7 @@
  */
 
 import { useEffect, useState } from 'react';
+
 import { useKibana } from '@kbn/kibana-react-plugin/public';
 
 interface WorkflowTraceSearchResult {

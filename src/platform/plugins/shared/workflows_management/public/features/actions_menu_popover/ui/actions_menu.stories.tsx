@@ -8,6 +8,7 @@
  */
 
 import type { Meta } from '@storybook/react';
+
 import { ActionsMenu } from './actions_menu';
 
 const meta: Meta = {

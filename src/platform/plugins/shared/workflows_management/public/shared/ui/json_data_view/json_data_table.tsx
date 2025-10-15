@@ -7,25 +7,27 @@
  * License v3.0 only", or the "Server Side Public License, v 1".
  */
 
-import React, { useMemo, useRef } from 'react';
-import type { DataTableRecord, DataTableColumnsMeta } from '@kbn/discover-utils/types';
 import {
   EuiDataGrid,
-  type UseEuiTheme,
-  euiFontSize,
   type EuiDataGridProps,
-  useResizeObserver,
   EuiEmptyPrompt,
+  euiFontSize,
+  type UseEuiTheme,
+  useResizeObserver,
 } from '@elastic/eui';
-import { useMemoCss } from '@kbn/css-utils/public/use_memo_css';
 import { css } from '@emotion/react';
-import { FormattedMessage } from '@kbn/i18n-react';
+import React, { useMemo, useRef } from 'react';
+
+import { useMemoCss } from '@kbn/css-utils/public/use_memo_css';
 import { usePager } from '@kbn/discover-utils';
+import type { DataTableColumnsMeta, DataTableRecord } from '@kbn/discover-utils/types';
+import { FormattedMessage } from '@kbn/i18n-react';
+
+import { FieldName } from './field_name';
+import { formatValue } from './format_value';
+import { inferFieldType } from './infer_field_type';
 import { TableFieldValue } from './table_field_value';
 import { kibanaFlatten } from '../../lib/kibana_flatten';
-import { FieldName } from './field_name';
-import { inferFieldType } from './infer_field_type';
-import { formatValue } from './format_value';
 import { useGetFormattedDateTime } from '../use_formatted_date';
 
 const MIN_NAME_COLUMN_WIDTH = 120;

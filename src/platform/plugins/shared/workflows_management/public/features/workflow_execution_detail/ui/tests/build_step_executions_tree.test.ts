@@ -9,6 +9,7 @@
 
 import { ExecutionStatus } from '@kbn/workflows';
 import type { WorkflowStepExecutionDto } from '@kbn/workflows';
+
 import { buildStepExecutionsTree } from '../build_step_executions_tree';
 
 // Helper function to create a valid WorkflowStepExecutionDto with all required properties

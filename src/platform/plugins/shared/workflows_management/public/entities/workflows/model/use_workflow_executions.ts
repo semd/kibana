@@ -7,9 +7,10 @@
  * License v3.0 only", or the "Server Side Public License, v 1".
  */
 
+import { useQuery, type UseQueryOptions } from '@tanstack/react-query';
+
 import { useKibana } from '@kbn/kibana-react-plugin/public';
 import type { ExecutionStatus, ExecutionType, WorkflowExecutionListDto } from '@kbn/workflows';
-import { useQuery, type UseQueryOptions } from '@tanstack/react-query';
 
 interface UseWorkflowExecutionsParams {
   workflowId: string | null;

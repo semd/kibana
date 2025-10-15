@@ -11,6 +11,7 @@ import type { ElasticsearchClient, Logger } from '@kbn/core/server';
 import type { IndexStorageSettings } from '@kbn/storage-adapter';
 import { StorageIndexAdapter, types } from '@kbn/storage-adapter';
 import type { WorkflowYaml } from '@kbn/workflows';
+
 import { workflowSystemIndex } from './indices';
 
 export const workflowIndexName = workflowSystemIndex('workflows');

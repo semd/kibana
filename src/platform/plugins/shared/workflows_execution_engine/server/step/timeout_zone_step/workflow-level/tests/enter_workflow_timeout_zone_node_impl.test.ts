@@ -7,12 +7,13 @@
  * License v3.0 only", or the "Server Side Public License, v 1".
  */
 
-import type { EnterTimeoutZoneNode } from '@kbn/workflows/graph';
 import { ExecutionStatus } from '@kbn/workflows';
-import { EnterWorkflowTimeoutZoneNodeImpl } from '../enter_workflow_timeout_zone_node_impl';
+import type { EnterTimeoutZoneNode } from '@kbn/workflows/graph';
+
+import type { WorkflowContextManager } from '../../../../workflow_context_manager/workflow_context_manager';
 import type { WorkflowExecutionRuntimeManager } from '../../../../workflow_context_manager/workflow_execution_runtime_manager';
 import type { WorkflowExecutionState } from '../../../../workflow_context_manager/workflow_execution_state';
-import type { WorkflowContextManager } from '../../../../workflow_context_manager/workflow_context_manager';
+import { EnterWorkflowTimeoutZoneNodeImpl } from '../enter_workflow_timeout_zone_node_impl';
 
 // Mock parseDuration function
 jest.mock('../../../../utils', () => ({

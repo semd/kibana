@@ -8,7 +8,9 @@
  */
 
 import { graphlib } from '@dagrejs/dagre';
+
 import type { WorkflowYaml } from '@kbn/workflows';
+
 import { getTriggerLabel } from '../../../shared/lib/graph_utils';
 
 export type WorkflowGraphNodeType =

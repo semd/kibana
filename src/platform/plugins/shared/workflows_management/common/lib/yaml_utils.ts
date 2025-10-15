@@ -7,9 +7,6 @@
  * License v3.0 only", or the "Server Side Public License, v 1".
  */
 
-import type { WorkflowYaml } from '@kbn/workflows/spec/schema';
-import type { ZodError } from '@kbn/zod';
-import { z } from '@kbn/zod';
 import type { Node, Pair, Scalar, YAMLMap } from 'yaml';
 import {
   Document,
@@ -23,10 +20,15 @@ import {
   parseDocument,
   visit,
 } from 'yaml';
-import { getSchemaAtPath } from './zod/zod_utils';
-import { getCompactTypeDescription, getDetailedTypeDescription } from './zod/zod_type_description';
+
+import type { WorkflowYaml } from '@kbn/workflows/spec/schema';
+import type { ZodError } from '@kbn/zod';
+import { z } from '@kbn/zod';
+
 import { InvalidYamlSchemaError, InvalidYamlSyntaxError } from './errors';
 import type { FormattedZodError, MockZodError } from './errors/invalid_yaml_schema';
+import { getCompactTypeDescription, getDetailedTypeDescription } from './zod/zod_type_description';
+import { getSchemaAtPath } from './zod/zod_utils';
 
 interface FormatValidationErrorResult {
   message: string;
@@ -757,7 +759,7 @@ const WORKFLOW_DEFINITION_KEYS_ORDER: Array<keyof WorkflowYaml> = [
 function _getDiagnosticMessage(workflowDefinition: Record<string, any>) {
   try {
     const serialized = JSON.stringify(workflowDefinition);
-    return serialized.length > 300 ? serialized.substring(0, 300) + '...' : serialized;
+    return serialized.length > 300 ? `${serialized.substring(0, 300)}...` : serialized;
   } catch {
     return `[object ${workflowDefinition?.constructor?.name ?? typeof workflowDefinition}]`;
   }

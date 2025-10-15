@@ -7,19 +7,21 @@
  * License v3.0 only", or the "Server Side Public License, v 1".
  */
 
-import { monaco } from '@kbn/monaco';
-import type { z } from '@kbn/zod';
 import { useCallback, useRef, useState } from 'react';
-import { parseDocument, type Document } from 'yaml';
+import { type Document, parseDocument } from 'yaml';
+
+import { monaco } from '@kbn/monaco';
 import { WorkflowGraph } from '@kbn/workflows/graph';
 import type { WorkflowYaml } from '@kbn/workflows/spec/schema';
-import { parseWorkflowYamlToJSON, formatValidationError } from '../../../../common/lib/yaml_utils';
-import type { YamlValidationResult } from '../model/types';
-import { MarkerSeverity, getSeverityString } from '../../../widgets/workflow_yaml_editor/lib/utils';
-import type { MockZodError } from '../../../../common/lib/errors/invalid_yaml_schema';
+import type { z } from '@kbn/zod';
+
+import { collectAllVariables } from './collect_all_variables';
 import { validateStepNameUniqueness } from './validate_step_name_uniqueness';
 import { validateVariables as validateVariablesInternal } from './validate_variables';
-import { collectAllVariables } from './collect_all_variables';
+import type { MockZodError } from '../../../../common/lib/errors/invalid_yaml_schema';
+import { formatValidationError, parseWorkflowYamlToJSON } from '../../../../common/lib/yaml_utils';
+import { getSeverityString, MarkerSeverity } from '../../../widgets/workflow_yaml_editor/lib/utils';
+import type { YamlValidationResult } from '../model/types';
 
 interface UseYamlValidationProps {
   workflowYamlSchema: z.ZodSchema;

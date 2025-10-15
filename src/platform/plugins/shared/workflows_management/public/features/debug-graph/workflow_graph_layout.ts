@@ -10,6 +10,7 @@
 import dagre from '@dagrejs/dagre';
 import type { Node } from '@xyflow/react';
 import { Position } from '@xyflow/react';
+
 import type { WorkflowGraph } from '@kbn/workflows/graph';
 
 /**

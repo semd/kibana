@@ -8,11 +8,12 @@
  */
 
 import type { GraphNodeUnion } from '@kbn/workflows/graph';
-import type { MonitorableNode } from '../step/node_implementation';
-import { WorkflowScopeStack } from '../workflow_context_manager/workflow_scope_stack';
-import { WorkflowContextManager } from '../workflow_context_manager/workflow_context_manager';
-import type { WorkflowExecutionLoopParams } from './types';
+
 import { cancelWorkflowIfRequested } from './cancel_workflow_if_requested';
+import type { WorkflowExecutionLoopParams } from './types';
+import type { MonitorableNode } from '../step/node_implementation';
+import { WorkflowContextManager } from '../workflow_context_manager/workflow_context_manager';
+import { WorkflowScopeStack } from '../workflow_context_manager/workflow_scope_stack';
 
 /**
  * Runs a monitoring loop that continuously checks workflow execution state and invokes

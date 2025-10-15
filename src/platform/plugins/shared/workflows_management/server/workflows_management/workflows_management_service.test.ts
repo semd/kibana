@@ -8,9 +8,11 @@
  */
 
 import { errors } from '@elastic/elasticsearch';
+
 import type { ElasticsearchClient, SecurityServiceStart } from '@kbn/core/server';
 import { loggerMock } from '@kbn/logging-mocks';
 import { ExecutionStatus, ExecutionType } from '@kbn/workflows';
+
 import { WorkflowsService } from './workflows_management_service';
 
 describe('WorkflowsService', () => {

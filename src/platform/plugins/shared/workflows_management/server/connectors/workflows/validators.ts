@@ -8,6 +8,7 @@
  */
 
 import type { ActionsConfigurationUtilities } from '@kbn/actions-plugin/server/actions_config';
+
 import * as i18n from './translations';
 
 export const validateAndNormalizeUrl = (

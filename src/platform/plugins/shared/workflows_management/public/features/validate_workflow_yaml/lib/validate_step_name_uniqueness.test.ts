@@ -8,6 +8,7 @@
  */
 
 import { parseDocument } from 'yaml';
+
 import { validateStepNameUniqueness } from './validate_step_name_uniqueness';
 
 describe('validateStepNameUniqueness', () => {

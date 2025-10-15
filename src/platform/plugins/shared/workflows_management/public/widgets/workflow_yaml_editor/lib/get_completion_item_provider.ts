@@ -7,40 +7,42 @@
  * License v3.0 only", or the "Server Side Public License, v 1".
  */
 
-import type { Scalar, Document, Pair, Node } from 'yaml';
-import { YAMLParseError, isPair, isScalar, parseDocument, visit } from 'yaml';
-import { monaco } from '@kbn/monaco';
-import { z } from '@kbn/zod';
 import moment from 'moment-timezone';
+import type { Document, Node, Pair, Scalar } from 'yaml';
+import { isPair, isScalar, parseDocument, visit, YAMLParseError } from 'yaml';
+
+import { monaco } from '@kbn/monaco';
 import type { BuiltInStepType, TriggerType } from '@kbn/workflows';
 import {
-  ForEachStepSchema,
-  IfStepSchema,
-  ParallelStepSchema,
-  MergeStepSchema,
-  HttpStepSchema,
-  WaitStepSchema,
   AlertRuleTriggerSchema,
-  ScheduledTriggerSchema,
+  ForEachStepSchema,
+  HttpStepSchema,
+  IfStepSchema,
   ManualTriggerSchema,
+  MergeStepSchema,
+  ParallelStepSchema,
+  ScheduledTriggerSchema,
+  WaitStepSchema,
 } from '@kbn/workflows';
 import { WorkflowGraph } from '@kbn/workflows/graph';
-import { getDetailedTypeDescription, getSchemaAtPath, parsePath } from '../../../../common/lib/zod';
-import { getCurrentPath, parseWorkflowYamlToJSON } from '../../../../common/lib/yaml_utils';
-import { getContextSchemaForPath } from '../../../features/workflow_context/lib/get_context_for_path';
-import {
-  VARIABLE_REGEX_GLOBAL,
-  PROPERTY_PATH_REGEX,
-  UNFINISHED_VARIABLE_REGEX_GLOBAL,
-} from '../../../../common/lib/regex';
-import { generateConnectorSnippet } from './snippets/generate_connector_snippet';
-import { generateBuiltInStepSnippet } from './snippets/generate_builtin_step_snippet';
-import {
-  generateTriggerSnippet,
-  generateRRuleTriggerSnippet,
-} from './snippets/generate_trigger_snippet';
+import { z } from '@kbn/zod';
+
 import { getCachedAllConnectors } from './connectors_cache';
 import { getIndentLevel } from './get_indent_level';
+import { generateBuiltInStepSnippet } from './snippets/generate_builtin_step_snippet';
+import { generateConnectorSnippet } from './snippets/generate_connector_snippet';
+import {
+  generateRRuleTriggerSnippet,
+  generateTriggerSnippet,
+} from './snippets/generate_trigger_snippet';
+import {
+  PROPERTY_PATH_REGEX,
+  UNFINISHED_VARIABLE_REGEX_GLOBAL,
+  VARIABLE_REGEX_GLOBAL,
+} from '../../../../common/lib/regex';
+import { getCurrentPath, parseWorkflowYamlToJSON } from '../../../../common/lib/yaml_utils';
+import { getDetailedTypeDescription, getSchemaAtPath, parsePath } from '../../../../common/lib/zod';
+import { getContextSchemaForPath } from '../../../features/workflow_context/lib/get_context_for_path';
 
 // Cache for built-in step types extracted from schema
 let builtInStepTypesCache: Array<{
@@ -1121,7 +1123,7 @@ export function getSuggestion(
     kind: monaco.languages.CompletionItemKind.Field,
     range,
     insertText,
-    detail: `${type}` + (description ? `: ${description}` : ''),
+    detail: `${type}${description ? `: ${description}` : ''}`,
     insertTextRules,
     additionalTextEdits: removeDot
       ? [

@@ -8,10 +8,11 @@
  */
 
 import type { GraphNodeUnion } from '@kbn/workflows/graph';
-import { WorkflowContextManager } from '../workflow_context_manager/workflow_context_manager';
-import type { WorkflowExecutionLoopParams } from './types';
-import { runStackMonitor } from './run_stack_monitor';
+
 import { catchError } from './catch_error';
+import { runStackMonitor } from './run_stack_monitor';
+import type { WorkflowExecutionLoopParams } from './types';
+import { WorkflowContextManager } from '../workflow_context_manager/workflow_context_manager';
 
 /**
  * Executes a single step in the workflow execution process.

@@ -9,6 +9,7 @@
 
 import { DEFAULT_APP_CATEGORIES } from '@kbn/core-application-common';
 import { i18n } from '@kbn/i18n';
+
 import type { WorkflowsManagementPluginServerDependenciesSetup } from './types';
 
 /**

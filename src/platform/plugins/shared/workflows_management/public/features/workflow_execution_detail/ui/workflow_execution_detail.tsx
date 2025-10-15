@@ -7,9 +7,10 @@
  * License v3.0 only", or the "Server Side Public License, v 1".
  */
 
-import React, { useCallback, useEffect, useMemo } from 'react';
 import { EuiPanel } from '@elastic/eui';
+import React, { useCallback, useEffect, useMemo } from 'react';
 import useLocalStorage from 'react-use/lib/useLocalStorage';
+
 import {
   ResizableLayout,
   ResizableLayoutDirection,
@@ -17,12 +18,13 @@ import {
   ResizableLayoutOrder,
 } from '@kbn/resizable-layout';
 import type { EsWorkflowStepExecution, WorkflowYaml } from '@kbn/workflows';
-import { useWorkflowUrlState } from '../../../hooks/use_workflow_url_state';
-import { WorkflowStepExecutionDetails } from './workflow_step_execution_details';
+
 import { useWorkflowExecutionPolling } from './hooks/use_workflow_execution_polling';
+import { WorkflowStepExecutionList } from './workflow_execution_list';
+import { WorkflowStepExecutionDetails } from './workflow_step_execution_details';
 import { parseWorkflowYamlToJSON } from '../../../../common/lib/yaml_utils';
 import { getWorkflowZodSchemaLoose } from '../../../../common/schema';
-import { WorkflowStepExecutionList } from './workflow_execution_list';
+import { useWorkflowUrlState } from '../../../hooks/use_workflow_url_state';
 
 const WidthStorageKey = 'WORKFLOWS_EXECUTION_DETAILS_WIDTH';
 const DefaultSidebarWidth = 300;

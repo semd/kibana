@@ -7,6 +7,7 @@
  * License v3.0 only", or the "Server Side Public License, v 1".
  */
 
+import type { IUnsecuredActionsClient } from '@kbn/actions-plugin/server';
 import type {
   CoreSetup,
   CoreStart,
@@ -15,17 +16,15 @@ import type {
   Plugin,
   PluginInitializerContext,
 } from '@kbn/core/server';
-
-import type { IUnsecuredActionsClient } from '@kbn/actions-plugin/server';
 import type { SpacesServiceStart } from '@kbn/spaces-plugin/server';
 import type { WorkflowExecutionEngineModel } from '@kbn/workflows/types/latest';
-import {
-  WORKFLOWS_EXECUTION_LOGS_INDEX,
-  WORKFLOWS_EXECUTIONS_INDEX,
-  WORKFLOWS_STEP_EXECUTIONS_INDEX,
-} from '../common';
-import type { WorkflowsManagementConfig } from './config';
 
+import type { WorkflowsManagementConfig } from './config';
+import {
+  getWorkflowsConnectorAdapter,
+  getConnectorType as getWorkflowsConnectorType,
+} from './connectors/workflows';
+import { registerFeatures } from './features';
 import { createWorkflowTaskRunner } from './tasks/workflow_task_runner';
 import { WorkflowTaskScheduler } from './tasks/workflow_task_scheduler';
 import type {
@@ -34,16 +33,16 @@ import type {
   WorkflowsPluginSetup,
   WorkflowsPluginStart,
 } from './types';
+import { registerUISettings } from './ui_settings';
 import { WorkflowsManagementApi } from './workflows_management/workflows_management_api';
 import { defineRoutes } from './workflows_management/workflows_management_routes';
 import { WorkflowsService } from './workflows_management/workflows_management_service';
 // Import the workflows connector
 import {
-  getWorkflowsConnectorAdapter,
-  getConnectorType as getWorkflowsConnectorType,
-} from './connectors/workflows';
-import { registerFeatures } from './features';
-import { registerUISettings } from './ui_settings';
+  WORKFLOWS_EXECUTION_LOGS_INDEX,
+  WORKFLOWS_EXECUTIONS_INDEX,
+  WORKFLOWS_STEP_EXECUTIONS_INDEX,
+} from '../common';
 
 export class WorkflowsPlugin implements Plugin<WorkflowsPluginSetup, WorkflowsPluginStart> {
   private readonly logger: Logger;

@@ -8,6 +8,7 @@
  */
 
 import { useKibana as useKibanaGeneric } from '@kbn/kibana-react-plugin/public';
+
 import type { WorkflowsServices } from '../types';
 
 /*

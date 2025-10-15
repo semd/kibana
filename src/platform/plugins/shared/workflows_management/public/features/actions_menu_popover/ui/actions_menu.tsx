@@ -9,24 +9,26 @@
 
 import type { EuiSelectableOption, UseEuiTheme } from '@elastic/eui';
 import {
-  EuiSelectable,
-  EuiHighlight,
-  EuiText,
-  EuiIcon,
-  EuiFlexItem,
-  EuiFlexGroup,
   EuiButtonEmpty,
-  EuiTitle,
+  EuiFlexGroup,
+  EuiFlexItem,
   euiFontSize,
+  EuiHighlight,
+  EuiIcon,
+  EuiSelectable,
+  EuiText,
+  EuiTitle,
   useEuiTheme,
 } from '@elastic/eui';
+import { css } from '@emotion/react';
 import React, { useMemo, useState } from 'react';
+
+import { useMemoCss } from '@kbn/css-utils/public/use_memo_css';
 import { i18n } from '@kbn/i18n';
 import { FormattedMessage } from '@kbn/i18n-react';
-import { css } from '@emotion/react';
-import { useMemoCss } from '@kbn/css-utils/public/use_memo_css';
-import type { ActionOptionData } from '../types';
+
 import { flattenOptions, getActionOptions } from '../lib/get_action_options';
+import type { ActionOptionData } from '../types';
 
 export interface ActionsMenuProps {
   onActionSelected: (action: ActionOptionData) => void;

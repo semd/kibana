@@ -10,7 +10,9 @@
 import type { EuiPopoverProps } from '@elastic/eui';
 import { EuiPopover } from '@elastic/eui';
 import React from 'react';
+
 import { i18n } from '@kbn/i18n';
+
 import { ActionsMenu } from './actions_menu';
 import type { ActionsMenuProps } from './actions_menu';
 

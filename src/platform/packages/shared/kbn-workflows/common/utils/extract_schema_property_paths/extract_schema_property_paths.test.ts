@@ -8,6 +8,7 @@
  */
 
 import { z, ZodFirstPartyTypeKind } from '@kbn/zod';
+
 import { extractSchemaPropertyPaths } from './extract_schema_property_paths';
 
 describe('extractSchemaPropertyPaths', () => {

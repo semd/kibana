@@ -8,6 +8,7 @@
  */
 
 import type { AxiosError } from 'axios';
+
 import { createServiceError } from './utils';
 
 describe('Workflows Utils', () => {

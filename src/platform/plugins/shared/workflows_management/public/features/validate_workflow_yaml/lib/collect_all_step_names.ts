@@ -8,6 +8,7 @@
  */
 
 import { isPair, isScalar, visit } from 'yaml';
+
 import { getPathFromAncestors } from '../../../../common/lib/yaml_utils';
 import type { StepNameInfo } from '../model/types';
 

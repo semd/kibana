@@ -8,6 +8,7 @@
  */
 
 import { parseDocument } from 'yaml';
+
 import { collectAllStepNames } from './collect_all_step_names';
 
 describe('collectAllStepNames', () => {

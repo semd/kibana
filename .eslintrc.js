@@ -2301,7 +2301,6 @@ module.exports = {
         'prefer-template': 'error',
         'react/boolean-prop-naming': 'error',
         'react/button-has-type': 'error',
-        'react/display-name': 'error',
         'react/forbid-dom-props': 'error',
         'react/no-access-state-in-setstate': 'error',
         'react/no-children-prop': 'error',
@@ -2411,12 +2410,6 @@ module.exports = {
         '@typescript-eslint/no-explicit-any': 'off',
       },
     },
-
-
-
-
-
-
 
     /**
      * Disallow `export *` syntax in plugin/core public/server/common index files and instead

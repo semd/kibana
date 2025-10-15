@@ -7,15 +7,16 @@
  * License v3.0 only", or the "Server Side Public License, v 1".
  */
 
-import type { monaco } from '@kbn/monaco';
 import type { HttpSetup, NotificationsSetup } from '@kbn/core/public';
+import type { monaco } from '@kbn/monaco';
+
 import { BaseMonacoConnectorHandler } from './base_monaco_connector_handler';
 import { getAllConnectors } from '../../../../../common/schema';
 import type {
-  HoverContext,
   ActionContext,
   ActionInfo,
   ConnectorExamples,
+  HoverContext,
 } from '../monaco_providers/provider_interfaces';
 
 // Cache for connectors (they don't change during runtime)

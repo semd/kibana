@@ -8,6 +8,7 @@
  */
 
 import React, { useMemo } from 'react';
+
 import { JSONCodeEditorCommonMemoized } from './json_editor_common';
 
 interface JsonDataCodeProps {

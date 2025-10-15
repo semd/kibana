@@ -7,12 +7,14 @@
  * License v3.0 only", or the "Server Side Public License, v 1".
  */
 
-import React, { useCallback, useMemo, useState } from 'react';
 import { debounce } from 'lodash';
-import type { WorkflowStepExecutionDto } from '@kbn/workflows';
+import React, { useCallback, useMemo, useState } from 'react';
+
 import { i18n } from '@kbn/i18n';
-import { JSONDataView, type JSONDataViewProps } from '../../../shared/ui/json_data_view';
+import type { WorkflowStepExecutionDto } from '@kbn/workflows';
+
 import { useKibana } from '../../../hooks/use_kibana';
+import { JSONDataView, type JSONDataViewProps } from '../../../shared/ui/json_data_view';
 
 export const STORAGE_KEY = 'workflows_management.step_execution_flyout.searchTerm';
 

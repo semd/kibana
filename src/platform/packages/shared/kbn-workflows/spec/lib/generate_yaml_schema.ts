@@ -7,8 +7,10 @@
  * License v3.0 only", or the "Server Side Public License, v 1".
  */
 
-import { z } from '@kbn/zod';
 import { zodToJsonSchema } from 'zod-to-json-schema';
+
+import { z } from '@kbn/zod';
+
 import {
   BaseConnectorStepSchema,
   getForEachStepSchema,

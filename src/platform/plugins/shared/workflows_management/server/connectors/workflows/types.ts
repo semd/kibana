@@ -9,6 +9,7 @@
 
 import type { TypeOf } from '@kbn/config-schema';
 import type { Logger } from '@kbn/core/server';
+
 import type { ExecutorParamsSchema } from './schema';
 
 export type ExecutorParams = TypeOf<typeof ExecutorParamsSchema>;

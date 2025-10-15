@@ -8,8 +8,10 @@
  */
 
 import { useEffect } from 'react';
+
 import type { ChromeBreadcrumb } from '@kbn/core/public';
 import { i18n } from '@kbn/i18n';
+
 import { PLUGIN_ID } from '../../../common';
 import { useKibana } from '../use_kibana';
 

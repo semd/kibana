@@ -8,16 +8,15 @@
  */
 
 import {
-  DEFAULT_APP_CATEGORIES,
   type AppMountParameters,
   type CoreSetup,
   type CoreStart,
+  DEFAULT_APP_CATEGORIES,
   type Plugin,
 } from '@kbn/core/public';
 import { Storage } from '@kbn/kibana-utils-plugin/public';
 import { WORKFLOWS_UI_SETTING_ID } from '@kbn/workflows/common/constants';
-import { PLUGIN_ID, PLUGIN_NAME } from '../common';
-// Lazy import to avoid bundling connector dependencies in main plugin
+
 import type {
   WorkflowsPluginSetup,
   WorkflowsPluginSetupDependencies,
@@ -26,6 +25,8 @@ import type {
   WorkflowsPluginStartDependencies,
   WorkflowsServices,
 } from './types';
+import { PLUGIN_ID, PLUGIN_NAME } from '../common';
+// Lazy import to avoid bundling connector dependencies in main plugin
 
 export class WorkflowsPlugin
   implements

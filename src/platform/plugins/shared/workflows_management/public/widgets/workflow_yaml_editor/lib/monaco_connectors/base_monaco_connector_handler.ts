@@ -8,12 +8,13 @@
  */
 
 import type { monaco } from '@kbn/monaco';
+
 import type {
-  MonacoConnectorHandler,
-  HoverContext,
   ActionContext,
   ActionInfo,
   ConnectorExamples,
+  HoverContext,
+  MonacoConnectorHandler,
 } from '../monaco_providers/provider_interfaces';
 
 /**

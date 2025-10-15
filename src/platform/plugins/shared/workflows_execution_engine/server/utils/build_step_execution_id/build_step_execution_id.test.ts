@@ -7,8 +7,10 @@
  * License v3.0 only", or the "Server Side Public License, v 1".
  */
 
-import type { StackFrame } from '@kbn/workflows';
 import crypto from 'crypto';
+
+import type { StackFrame } from '@kbn/workflows';
+
 import { buildStepExecutionId } from './build_step_execution_id';
 
 describe('buildStepExecutionId', () => {

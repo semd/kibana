@@ -8,6 +8,7 @@
  */
 
 import type { ConnectorContract } from '@kbn/workflows';
+
 import { getAllConnectors } from '../../../../common/schema';
 
 // Global cache for connectors (they don't change during runtime)

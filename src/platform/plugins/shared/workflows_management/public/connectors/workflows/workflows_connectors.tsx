@@ -8,8 +8,10 @@
  */
 
 import { EuiText } from '@elastic/eui';
-import type { ConfigFieldSchema, SecretsFieldSchema } from '@kbn/triggers-actions-ui-plugin/public';
 import React from 'react';
+
+import type { ConfigFieldSchema, SecretsFieldSchema } from '@kbn/triggers-actions-ui-plugin/public';
+
 import * as i18n from './translations';
 
 const WorkflowsConnectorFields: React.FunctionComponent<any> = () => {

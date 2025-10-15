@@ -7,10 +7,12 @@
  * License v3.0 only", or the "Server Side Public License, v 1".
  */
 
-import type { WorkflowGraph } from '@kbn/workflows/graph';
-import type YAML from 'yaml';
 import type { EnhancedStore } from '@reduxjs/toolkit';
+import type YAML from 'yaml';
+
 import type { WorkflowStepExecutionDto } from '@kbn/workflows';
+import type { WorkflowGraph } from '@kbn/workflows/graph';
+
 import type { WorkflowLookup } from './utils/build_workflow_lookup';
 
 // State interface - only serializable data

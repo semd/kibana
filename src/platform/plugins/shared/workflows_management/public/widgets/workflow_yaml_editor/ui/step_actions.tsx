@@ -7,7 +7,6 @@
  * License v3.0 only", or the "Server Side Public License, v 1".
  */
 
-import React, { useState, useMemo } from 'react';
 import {
   EuiButtonIcon,
   EuiContextMenuPanel,
@@ -15,11 +14,14 @@ import {
   EuiFlexItem,
   EuiPopover,
 } from '@elastic/eui';
-import { i18n } from '@kbn/i18n';
+import React, { useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
+
+import { i18n } from '@kbn/i18n';
+
 import { RunStepButton } from './run_step_button';
-import { selectFocusedStepInfo } from '../lib/store';
 import { CopyElasticSearchDevToolsOption, CopyWorkflowStepOption } from './step_action_options';
+import { selectFocusedStepInfo } from '../lib/store';
 
 export interface StepActionsProps {
   onStepActionClicked?: (params: { stepId: string; actionType: string }) => void;

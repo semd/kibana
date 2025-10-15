@@ -7,15 +7,15 @@
  * License v3.0 only", or the "Server Side Public License, v 1".
  */
 
-import React, { useMemo } from 'react';
-import type { NodeTypes, Node } from '@xyflow/react';
-import { Background, Controls, ReactFlow } from '@xyflow/react';
 import { useEuiTheme } from '@elastic/eui';
+import type { Node, NodeTypes } from '@xyflow/react';
+import { Background, Controls, ReactFlow } from '@xyflow/react';
+import React, { useMemo } from 'react';
 import { useSelector } from 'react-redux';
 
 import { ExecutionGraphEdge, ExecutionGraphNode } from './nodes';
+import { atomicNodes, mainScopeNodes, secondaryScopeNodes } from './nodes/types';
 import { convertWorkflowGraphToReactFlow } from './workflow_graph_layout';
-import { mainScopeNodes, secondaryScopeNodes, atomicNodes } from './nodes/types';
 
 import '@xyflow/react/dist/style.css';
 import { selectWorkflowGraph } from '../../widgets/workflow_yaml_editor/lib/store';

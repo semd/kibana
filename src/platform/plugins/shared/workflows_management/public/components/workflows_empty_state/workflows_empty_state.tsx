@@ -19,9 +19,10 @@ import {
   EuiTitle,
   EuiToolTip,
 } from '@elastic/eui';
+import React from 'react';
+
 import { FormattedMessage } from '@kbn/i18n-react';
 import { useKibana } from '@kbn/kibana-react-plugin/public';
-import React from 'react';
 
 interface WorkflowsEmptyStateProps {
   onCreateWorkflow?: () => void;

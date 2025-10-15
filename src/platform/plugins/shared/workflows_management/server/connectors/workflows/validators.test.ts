@@ -8,6 +8,7 @@
  */
 
 import { actionsConfigMock } from '@kbn/actions-plugin/server/actions_config.mock';
+
 import { removeSlash, validateAndNormalizeUrl } from './validators';
 
 describe('Workflows Validators', () => {

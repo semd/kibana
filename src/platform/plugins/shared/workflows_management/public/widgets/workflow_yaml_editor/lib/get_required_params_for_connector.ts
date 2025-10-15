@@ -8,6 +8,7 @@
  */
 
 import { z } from '@kbn/zod';
+
 import { getCachedAllConnectors } from './connectors_cache';
 import type { EnhancedConnectorDefinition } from '../../../../common/enhanced_es_connectors';
 

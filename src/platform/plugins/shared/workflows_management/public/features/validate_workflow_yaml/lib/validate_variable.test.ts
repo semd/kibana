@@ -8,6 +8,7 @@
  */
 
 import { z } from '@kbn/zod';
+
 import type { VariableItem } from '../model/types';
 import { validateVariable } from './validate_variable';
 

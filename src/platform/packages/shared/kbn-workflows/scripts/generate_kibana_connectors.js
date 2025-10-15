@@ -14,9 +14,9 @@
  * This reads the Kibana OpenAPI spec and generates static connector data for the browser
  */
 
+const { execSync } = require('child_process');
 const fs = require('fs');
 const path = require('path');
-const { execSync } = require('child_process');
 
 /**
  * Helper function to safely quote parameter names if needed
@@ -358,7 +358,7 @@ function parseExampleForParams(exampleContent) {
 
           if (value && !value.startsWith('-')) {
             // Store the parameter value
-            const fullKey = currentPath.length > 0 ? currentPath.join('.') + '.' + key : key;
+            const fullKey = currentPath.length > 0 ? `${currentPath.join('.')}.${key}` : key;
             params[fullKey] = value.replace(/['"]/g, '');
           }
 
@@ -435,7 +435,7 @@ function extractEndpointInfo(content) {
       currentObject = line;
       braceDepth = openBraces - closeBraces;
     } else if (inObject) {
-      currentObject += '\n' + line;
+      currentObject += `\n${line}`;
       braceDepth += openBraces - closeBraces;
 
       // Check if we've closed the object

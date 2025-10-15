@@ -8,9 +8,11 @@
  */
 
 import type { UseEuiTheme } from '@elastic/eui';
+
 import { i18n } from '@kbn/i18n';
-import { getStepIconType } from '../../../shared/ui/get_step_icon_type';
+
 import { getAllConnectors } from '../../../../common/schema';
+import { getStepIconType } from '../../../shared/ui/get_step_icon_type';
 import type { ActionOptionData } from '../types';
 
 export function getActionOptions(euiTheme: UseEuiTheme['euiTheme']): ActionOptionData[] {

@@ -8,6 +8,7 @@
  */
 
 import { z } from '@kbn/zod';
+
 import { GENERATED_KIBANA_CONNECTORS, KIBANA_CONNECTOR_COUNT } from './generated_kibana_connectors';
 import type { InternalConnectorContract } from '../spec/lib/generate_yaml_schema';
 

@@ -8,6 +8,7 @@
  */
 
 import type { ActionTypeModel } from '@kbn/triggers-actions-ui-plugin/public/types';
+
 import type { WorkflowsActionParams, WorkflowsConfig, WorkflowsSecrets } from './types';
 import { getConnectorType } from './workflows';
 
