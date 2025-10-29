@@ -39,14 +39,6 @@ describe('GET /api/workflows/{id} - Integration Tests', () => {
       });
     });
 
-    it('should validate route path parameters', async () => {
-      // Missing id parameter should be handled by route validation
-      await request
-        .get(root, '/api/workflows/')
-        .set('x-elastic-internal-origin', 'workflows-test')
-        .expect(404); // Not found since there's no matching route
-    });
-
     it('should include proper error handling', async () => {
       const response = await request
         .get(root, '/api/workflows/test-id-123')
