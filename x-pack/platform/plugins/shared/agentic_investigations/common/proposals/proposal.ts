@@ -198,6 +198,36 @@ export interface ListProposalsResponse {
   total: number;
 }
 
+/**
+ * Maximum number of proposals returned by `listActivity`. Prevents runaway
+ * result sets; callers receive a `truncated` flag when this cap is hit.
+ */
+export const MAX_PROPOSAL_ACTIVITY_SIZE = 500;
+
+export const proposalActivityQuerySchema = z.object({
+  /**
+   * How far back (in hours) to look for *decided* proposals. Pending proposals
+   * are always included regardless of age. Defaults to 24h, max 168h (7 days).
+   */
+  windowHours: z.coerce.number().int().min(1).max(168).default(24),
+});
+export type ProposalActivityQuery = z.infer<typeof proposalActivityQuerySchema>;
+
+export interface ProposalActivityResponse {
+  proposals: ProposalWithMetadata[];
+  total: number;
+  /**
+   * `true` when the result was capped at `MAX_PROPOSAL_ACTIVITY_SIZE`. The
+   * caller is seeing the highest-priority prefix; the remaining proposals exist
+   * but were dropped.
+   *
+   * TODO(#19258): once `supersededBy` is added to the index, filter both pending
+   * and decided proposals by `supersededBy IS NULL` so that a replaced proposal
+   * no longer appears in either group.
+   */
+  truncated: boolean;
+}
+
 /** Terminal states: a decided or executed proposal can no longer be acted on. */
 export const isDecided = (status: ProposalStatus): boolean => status !== 'pending';
 

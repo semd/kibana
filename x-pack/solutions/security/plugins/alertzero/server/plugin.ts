@@ -54,6 +54,8 @@ export class AlertZeroPlugin
   /** Created during `start`; routes resolve them lazily after managed-workflow initialization. */
   private watchesService?: WatchesService;
   private workersService?: WorkersService;
+  private agentBuilderStart?: AlertZeroStartDependencies['agentBuilder'];
+  private agenticInvestigationsStart?: AlertZeroStartDependencies['agenticInvestigations'];
 
   constructor(context: PluginInitializerContext<AlertZeroConfig>) {
     this.logger = context.logger.get();
@@ -62,7 +64,13 @@ export class AlertZeroPlugin
 
   setup(
     coreSetup: CoreSetup<AlertZeroStartDependencies, AlertZeroPluginStart>,
-    { agentBuilder, features, workflowsExtensions, workflowsManagement }: AlertZeroSetupDependencies
+    {
+      agentBuilder,
+      agenticInvestigations: _agenticInvestigationsSetup,
+      features,
+      workflowsExtensions,
+      workflowsManagement,
+    }: AlertZeroSetupDependencies
   ): AlertZeroPluginSetup {
     if (!this.config.enabled) {
       this.logger.info('AlertZero plugin is disabled');
@@ -107,6 +115,8 @@ export class AlertZeroPlugin
       getSpaceId: (request) => this.getSpaceId(request),
       getWatchesService: () => this.requireWatchesService(),
       getWorkersService: () => this.requireWorkersService(),
+      getAgentBuilder: () => this.requireAgentBuilder(),
+      getProposalsService: () => this.requireProposalsService(),
     });
 
     return {};
@@ -114,6 +124,8 @@ export class AlertZeroPlugin
 
   start(_core: CoreStart, plugins: AlertZeroStartDependencies): AlertZeroPluginStart {
     this.spaces = plugins.spaces;
+    this.agentBuilderStart = plugins.agentBuilder;
+    this.agenticInvestigationsStart = plugins.agenticInvestigations;
 
     if (!this.config.enabled) {
       return {};
@@ -169,6 +181,26 @@ export class AlertZeroPlugin
       throw new Error('Workers service is not available until the AlertZero plugin has started');
     }
     return this.workersService;
+  }
+
+  private requireAgentBuilder(): AlertZeroStartDependencies['agentBuilder'] {
+    if (!this.agentBuilderStart) {
+      throw new Error(
+        'AgentBuilder start contract is not available until the AlertZero plugin has started'
+      );
+    }
+    return this.agentBuilderStart;
+  }
+
+  private requireProposalsService(): ReturnType<
+    AlertZeroStartDependencies['agenticInvestigations']['getProposalsService']
+  > {
+    if (!this.agenticInvestigationsStart) {
+      throw new Error(
+        'AgenticInvestigations start contract is not available until the AlertZero plugin has started'
+      );
+    }
+    return this.agenticInvestigationsStart.getProposalsService();
   }
 
   private getSpaceId(request: KibanaRequest): string {

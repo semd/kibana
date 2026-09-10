@@ -41,6 +41,9 @@ export const ALERTZERO_INVESTIGATION_URL_TEMPLATE = `${ALERTZERO_INVESTIGATIONS_
 export const buildInvestigationUrl = (id: string) =>
   `${ALERTZERO_INVESTIGATIONS_URL}/${encodeURIComponent(id)}`;
 
+/** Proposal activity (grouped by category) — AlertZero landing page. */
+export const ALERTZERO_PROPOSAL_ACTIVITY_URL = `${ALERTZERO_INTERNAL_URL}/proposals/activity` as const;
+
 /**
  * Shared thin AlertZero agent for all Worker `ai.agent` steps.
  * Can expand this to multiple scoped thin agents in the future if needed.

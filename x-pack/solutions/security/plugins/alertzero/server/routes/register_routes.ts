@@ -6,6 +6,8 @@
  */
 
 import type { IRouter, Logger } from '@kbn/core/server';
+import type { AgentBuilderPluginStart } from '@kbn/agent-builder-server';
+import type { AgenticInvestigationsPluginStart } from '@kbn/agentic-investigations-plugin/server';
 import type { AlertZeroConfig } from '../config';
 import type { AlertZeroSpaceIdResolver } from '../types';
 import type { WatchesService } from '../services/watches/watches_service';
@@ -17,6 +19,9 @@ import { registerUpdateWorkerRoute } from './workers/update_worker';
 import { registerListInvestigationsRoute } from './investigations/list_investigations';
 import { registerGetInvestigationRoute } from './investigations/get_investigation';
 import { registerListInvestigationProposalsRoute } from './investigations/list_proposals';
+import { registerGetProposalActivityRoute } from './proposals/get_proposal_activity';
+
+export type ProposalsService = ReturnType<AgenticInvestigationsPluginStart['getProposalsService']>;
 
 export interface RouteDependencies {
   router: IRouter;
@@ -25,6 +30,8 @@ export interface RouteDependencies {
   getSpaceId: AlertZeroSpaceIdResolver;
   getWatchesService: () => WatchesService;
   getWorkersService: () => WorkersService;
+  getAgentBuilder: () => AgentBuilderPluginStart;
+  getProposalsService: () => ProposalsService;
 }
 
 export const registerRoutes = (deps: RouteDependencies): void => {
@@ -35,4 +42,5 @@ export const registerRoutes = (deps: RouteDependencies): void => {
   registerListInvestigationsRoute(deps);
   registerGetInvestigationRoute(deps);
   registerListInvestigationProposalsRoute(deps);
+  registerGetProposalActivityRoute(deps);
 };
