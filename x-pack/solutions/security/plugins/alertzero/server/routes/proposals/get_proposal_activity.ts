@@ -7,7 +7,11 @@
 
 import { ApiPrivileges } from '@kbn/core-security-server';
 import type { z } from '@kbn/zod/v4';
-import { API_VERSIONS, ALERTZERO_PROPOSAL_ACTIVITY_URL, INTERNAL_API_ACCESS } from '@kbn/alertzero-common';
+import {
+  API_VERSIONS,
+  ALERTZERO_PROPOSAL_ACTIVITY_URL,
+  INTERNAL_API_ACCESS,
+} from '@kbn/alertzero-common';
 import { proposalActivityQuerySchema } from '@kbn/agentic-investigations-plugin/common';
 import { buildRouteValidationWithZod } from '@kbn/zod-helpers/v4';
 import { ALERTZERO_API_PRIVILEGE_READ } from '../../../common/constants';

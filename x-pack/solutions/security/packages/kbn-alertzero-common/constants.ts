@@ -42,7 +42,8 @@ export const buildInvestigationUrl = (id: string) =>
   `${ALERTZERO_INVESTIGATIONS_URL}/${encodeURIComponent(id)}`;
 
 /** Proposal activity (grouped by category) — AlertZero landing page. */
-export const ALERTZERO_PROPOSAL_ACTIVITY_URL = `${ALERTZERO_INTERNAL_URL}/proposals/activity` as const;
+export const ALERTZERO_PROPOSAL_ACTIVITY_URL =
+  `${ALERTZERO_INTERNAL_URL}/proposals/activity` as const;
 
 /**
  * Shared thin AlertZero agent for all Worker `ai.agent` steps.
