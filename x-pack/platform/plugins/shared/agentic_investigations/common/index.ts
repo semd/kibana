@@ -24,6 +24,8 @@ export {
   PROPOSAL_APPROVE_URL,
   PROPOSAL_BY_ID_URL,
   PROPOSAL_DISMISS_URL,
+  PROPOSAL_CHARTS_SUMMARY_URL,
+  actionMetadataSchema,
   approveProposalRequestSchema,
   createProposalRequestSchema,
   dismissProposalRequestSchema,
@@ -36,8 +38,9 @@ export {
   proposalImpactSchema,
   proposalOriginSchema,
   proposalSchema,
+  proposalChartsSummaryQuerySchema,
   proposalStatusSchema,
-  actionMetadataSchema,
+  proposalUserSchema,
 } from './proposals';
 
 export type {
@@ -53,6 +56,10 @@ export type {
   ProposalConfidence,
   ProposalImpact,
   ProposalOrigin,
+  ProposalChartsSummaryBucket,
+  ProposalChartsSummaryQuery,
+  ProposalChartsSummaryResponse,
   ProposalStatus,
+  ProposalUser,
   ProposalWithMetadata,
 } from './proposals';

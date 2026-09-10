@@ -14,6 +14,7 @@ export {
   PROPOSAL_APPROVE_URL,
   PROPOSAL_BY_ID_URL,
   PROPOSAL_DISMISS_URL,
+  PROPOSAL_CHARTS_SUMMARY_URL,
 } from './constants';
 
 // The action-workflow contract is owned by @kbn/workflows, where the action
@@ -34,7 +35,9 @@ export {
   proposalImpactSchema,
   proposalOriginSchema,
   proposalSchema,
+  proposalChartsSummaryQuerySchema,
   proposalStatusSchema,
+  proposalUserSchema,
 } from './proposal';
 
 export type {
@@ -49,6 +52,10 @@ export type {
   ProposalConfidence,
   ProposalImpact,
   ProposalOrigin,
+  ProposalChartsSummaryBucket,
+  ProposalChartsSummaryQuery,
+  ProposalChartsSummaryResponse,
   ProposalStatus,
+  ProposalUser,
   ProposalWithMetadata,
 } from './proposal';
